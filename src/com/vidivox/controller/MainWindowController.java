@@ -67,6 +67,9 @@ public class MainWindowController {
     private Button playPauseButton;
 
     @FXML
+    private ToolBar audioOptionBar;
+
+    @FXML
     private void handleOpenVideoButton(){
         final FileChooser fileChooser = new FileChooser();
         FileChooser.ExtensionFilter mp4Filter = new FileChooser.ExtensionFilter("MP4 files (.mp4)", "*.mp4");
@@ -205,13 +208,13 @@ public class MainWindowController {
     }
 
     @FXML
-    private void handleAddSpeechButton() {
+    private void handleManageAudioButton() {
         initaliseTextListener();
-        if (speechOptionBar.isVisible()){
+        if (audioOptionBar.isVisible()){
             return;
         }
-        speechOptionBar.setVisible(true);
-        FadeTransition speechFT = new FadeTransition(Duration.millis(100), speechOptionBar);
+        audioOptionBar.setVisible(true);
+        FadeTransition speechFT = new FadeTransition(Duration.millis(100), audioOptionBar);
         //Can't use the normal method here, its a fade in, not a fade out.
         speechFT.setFromValue(0.0);
         speechFT.setToValue(1.0);
