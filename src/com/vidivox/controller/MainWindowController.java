@@ -78,6 +78,9 @@ public class MainWindowController {
     private ListView audioList;
 
     @FXML
+    private MenuItem openVideoButton;
+
+    @FXML
     private void handleOpenVideoButton(){
         final FileChooser fileChooser = new FileChooser();
         FileChooser.ExtensionFilter mp4Filter = new FileChooser.ExtensionFilter("MP4 files (.mp4)", "*.mp4");
@@ -197,7 +200,8 @@ public class MainWindowController {
             FadeTransition menuFT = new FadeTransition(Duration.millis(10000), mainMenuBar);
             FadeTransition videoFT = new FadeTransition(Duration.millis(10000), videoOptionBar);
             FadeTransition sliderFT = new FadeTransition(Duration.millis(10000), mainProgressSlider);
-            if (mainMediaPlayer.getStatus() == MediaPlayer.Status.PLAYING) {
+            //If the video isn't playing, or the editing bars are up, don't fade out.
+            if (mainMediaPlayer.getStatus() == MediaPlayer.Status.PLAYING&&!audioOptionBar.isVisible()) {
                 playFadingAnimation(menuFT);
                 playFadingAnimation(videoFT);
                 playFadingAnimation(sliderFT);
@@ -387,6 +391,10 @@ public class MainWindowController {
             WarningDialogue inputBox = new WarningDialogue("Please enter a name for the project:", "Project", true);
             //Create the directory.
             CurrentDirectory.makeDir();
+            //Enable video options.
+            if (openVideoButton.isDisable()){
+                openVideoButton.setDisable(false);
+            }
         }catch(NullPointerException e1) {
             //This is thrown if the user cancels the directory choosing operation.
             CurrentDirectory.interrupted();
