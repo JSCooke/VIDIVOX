@@ -54,9 +54,13 @@
     </right>
     <left>
         <ToolBar orientation="VERTICAL" prefHeight="120.0" prefWidth="125.0" visible="false">
-        <ListView>
+        <ListView prefWidth="125.0">
 
         </ListView>
+            <Button mnemonicParsing="false" prefHeight="25.0" prefWidth="125.0" text="Add..." />
+            <Button mnemonicParsing="false" prefHeight="25.0" prefWidth="125.0" text="Remove" />
+            <Button mnemonicParsing="false" prefHeight="25.0" prefWidth="125.0" text="Create New" />
+            <Button mnemonicParsing="false" prefHeight="25.0" prefWidth="125.0" text="Close" />
         </ToolBar>
     </left>
    <bottom>
