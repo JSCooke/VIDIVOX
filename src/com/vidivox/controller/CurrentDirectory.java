@@ -1,5 +1,6 @@
 package com.vidivox.controller;
 
+import com.vidivox.Generators.ManifestController;
 import com.vidivox.view.WarningDialogue;
 
 import java.io.File;
@@ -11,11 +12,6 @@ import java.io.File;
 //Jayden note (Disregard this comment if I forgot to take this out) - this needs to be more modular
 public class CurrentDirectory {
     private static CurrentDirectory currentDirectory;
-
-    public static File getDirectory() {
-        return directory;
-    }
-
     private static File directory;
     private static String name;
     private static String path;
@@ -60,6 +56,8 @@ public class CurrentDirectory {
         directory=new File(pathAndName);
         if (!directory.exists()){
             directory.mkdir();
+            ManifestController newMani = new ManifestController(directory);
+            newMani.create();
         }else{
             new WarningDialogue("That directory already exists, please try again.");
             interrupted();
@@ -76,5 +74,10 @@ public class CurrentDirectory {
         String pathAndName = path+System.getProperty("file.separator")+name;//Platform independent file separator.
         directory=new File(pathAndName);
     }
+
+    public static File getDirectory() {
+        return directory;
+    }
+
 }
 
