@@ -254,6 +254,9 @@ public class MainWindowController {
         if (!audioOptionBar.isVisible()){
             return;
         }
+        if (speechOptionBar.isVisible()){
+            handleCloseSpeechButton();
+        }
         FadeTransition speechFT = new FadeTransition(Duration.millis(100), audioOptionBar);
         playFadingAnimation(speechFT);
         speechFT.setOnFinished(new EventHandler<ActionEvent>() {
