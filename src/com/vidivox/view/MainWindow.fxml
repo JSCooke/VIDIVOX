@@ -21,7 +21,7 @@
       </MenuBar>
       <ToolBar layoutY="187.0" prefHeight="40.0" prefWidth="200.0" translateY="180.0" BorderPane.alignment="CENTER_RIGHT">
         <items>
-          <Button mnemonicParsing="false" text="Add Speech" />
+          <Button mnemonicParsing="false" text="Manage Audio" />
             <Button mnemonicParsing="false" text="Play/Pause" />
             <Slider />
         </items>
@@ -47,7 +47,7 @@
                 <TextArea fx:id="mainSpeechTextArea" prefHeight="400.0" prefWidth="125.0" promptText="Enter up to 20 words to add to the video..." wrapText="true" />
                 <Button fx:id="speechPreviewButton" layoutX="18.0" layoutY="9.0" mnemonicParsing="false" onAction="#handleSpeechPreviewButton" prefHeight="25.0" prefWidth="125.0" text="Preview" disable="true"/>
                 <Button fx:id="speechSaveButton" layoutX="18.0" layoutY="39.0" mnemonicParsing="false" onAction="#handleSaveAudioButton" prefHeight="25.0" prefWidth="125.0" text="Save Audio to File..." disable="true"/>
-                <Button layoutX="18.0" layoutY="70.0" mnemonicParsing="false" onAction="#handleAddToVideoButton" prefHeight="25.0" prefWidth="125.0" text="Add to Video..." />
+                <Button layoutX="18.0" layoutY="70.0" mnemonicParsing="false" onAction="#handleAddToVideoButton" prefHeight="25.0" prefWidth="125.0" text="Add to Project" />
                 <Button layoutX="18.0" layoutY="105.0" mnemonicParsing="false" onAction="#handleCloseButton" prefHeight="25.0" prefWidth="125.0" text="Close" />
             </items>
         </ToolBar>
