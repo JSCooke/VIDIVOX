@@ -9,20 +9,19 @@ import javafx.event.EventHandler;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaException;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
+import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
 import java.io.File;
 import java.lang.reflect.Array;
-import java.util.Arrays;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -327,5 +326,28 @@ public class MainWindowController {
     private void handleCloseMenuButton() {
         Stage stage = (Stage) mainWindow.getScene().getWindow();
         stage.close();
+    }
+
+    @FXML
+    /**
+     * Allows the user to create a new project.
+     * This entails navigating to a directory, and creating a folder, then setting that folder up as the CurrentDirectory.
+     */
+    private void handleNewProjectButton() {
+        try {
+            //Call the directory chooser, which generates a window based on the user's OS.
+            DirectoryChooser dirChooser = new DirectoryChooser();
+            dirChooser.setTitle("Select project location...");
+            File destDirectory = dirChooser.showDialog(new Stage());
+            //Add the path of the current directory.
+            CurrentDirectory.addPath(destDirectory.getAbsolutePath().toString());
+            //Ask for user input.
+            WarningDialogue inputBox = new WarningDialogue("Please enter a name for the project:", "Project", true);
+            //Create the directory.
+            CurrentDirectory.makeDir();
+        }catch(NullPointerException e1) {
+            //This is thrown if the user cancels the directory choosing operation.
+            CurrentDirectory.interrupted();
+        }
     }
 }
