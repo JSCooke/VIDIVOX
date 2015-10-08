@@ -222,7 +222,7 @@ public class MainWindowController {
     }
 
     @FXML
-    private void handleCloseButton() {
+    private void handleCloseSpeechButton() {
         if (!speechOptionBar.isVisible()){
             return;
         }
@@ -232,6 +232,21 @@ public class MainWindowController {
             @Override
             public void handle(ActionEvent arg0) {
                 speechOptionBar.setVisible(false);
+            }
+        });
+    }
+
+    @FXML
+    private void handleCloseAudioButton() {
+        if (!audioOptionBar.isVisible()){
+            return;
+        }
+        FadeTransition speechFT = new FadeTransition(Duration.millis(100), audioOptionBar);
+        playFadingAnimation(speechFT);
+        speechFT.setOnFinished(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent arg0) {
+                audioOptionBar.setVisible(false);
             }
         });
     }

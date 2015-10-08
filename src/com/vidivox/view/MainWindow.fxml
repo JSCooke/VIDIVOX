@@ -60,7 +60,7 @@
                         <Tooltip text="Add the speech to the project"/>
                     </tooltip>
                 </Button>
-                <Button layoutX="18.0" layoutY="105.0" mnemonicParsing="false" onAction="#handleCloseButton" prefHeight="25.0" prefWidth="125.0" text="Close" >
+                <Button layoutX="18.0" layoutY="105.0" mnemonicParsing="false" onAction="#handleCloseSpeechButton" prefHeight="25.0" prefWidth="125.0" text="Close" >
                     <tooltip>
                         <Tooltip text="Close this toolbar"/>
                     </tooltip>
@@ -88,7 +88,7 @@
                     <Tooltip text="View the speech toolbar to create your own audio"/>
                 </tooltip>
             </Button>
-            <Button mnemonicParsing="false" prefHeight="25.0" prefWidth="125.0" text="Close">
+            <Button mnemonicParsing="false" prefHeight="25.0" prefWidth="125.0" text="Close" onAction="#handleCloseAudioButton">
                 <tooltip>
                     <Tooltip text="Close this toolbar"/>
                 </tooltip>
