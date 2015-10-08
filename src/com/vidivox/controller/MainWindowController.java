@@ -208,17 +208,30 @@ public class MainWindowController {
     }
 
     @FXML
-    private void handleManageAudioButton() {
+    private void handleAddSpeechButton() {
         initaliseTextListener();
-        if (audioOptionBar.isVisible()){
-            return;
-        }
-        audioOptionBar.setVisible(true);
-        FadeTransition speechFT = new FadeTransition(Duration.millis(100), audioOptionBar);
+            if (speechOptionBar.isVisible()){
+                return;
+            }
+        speechOptionBar.setVisible(true);
+        FadeTransition speechFT = new FadeTransition(Duration.millis(100), speechOptionBar);
         //Can't use the normal method here, its a fade in, not a fade out.
         speechFT.setFromValue(0.0);
         speechFT.setToValue(1.0);
         speechFT.playFromStart();
+    }
+
+    @FXML
+    private void handleManageAudioButton() {
+        if (audioOptionBar.isVisible()){
+            return;
+        }
+        audioOptionBar.setVisible(true);
+        FadeTransition audioFT = new FadeTransition(Duration.millis(100), audioOptionBar);
+        //Can't use the normal method here, its a fade in, not a fade out.
+        audioFT.setFromValue(0.0);
+        audioFT.setToValue(1.0);
+        audioFT.playFromStart();
     }
 
     @FXML

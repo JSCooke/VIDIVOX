@@ -83,7 +83,7 @@
                     <Tooltip text="Remove the selected file from the list"/>
                 </tooltip>
             </Button>
-            <Button mnemonicParsing="false" prefHeight="25.0" prefWidth="125.0" text="Create New" >
+            <Button mnemonicParsing="false" prefHeight="25.0" prefWidth="125.0" text="Create New" onAction="#handleAddSpeechButton">
                 <tooltip>
                     <Tooltip text="View the speech toolbar to create your own audio"/>
                 </tooltip>
