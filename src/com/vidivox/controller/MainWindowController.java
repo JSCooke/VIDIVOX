@@ -4,6 +4,9 @@ import com.vidivox.Generators.FestivalSpeech;
 import com.vidivox.Generators.VideoController;
 import com.vidivox.view.WarningDialogue;
 import javafx.animation.FadeTransition;
+import javafx.beans.property.ListProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.beans.value.ChangeListener;
@@ -21,7 +24,9 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 
 import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Array;
+import java.nio.file.Files;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -68,6 +73,9 @@ public class MainWindowController {
 
     @FXML
     private ToolBar audioOptionBar;
+
+    @FXML
+    private ListView audioList;
 
     @FXML
     private void handleOpenVideoButton(){
@@ -382,6 +390,40 @@ public class MainWindowController {
         }catch(NullPointerException e1) {
             //This is thrown if the user cancels the directory choosing operation.
             CurrentDirectory.interrupted();
+        }
+    }
+
+    @FXML
+    /**
+     * Adds audio chosen by the user to the list of audio files in the project.
+     */
+    private void handleAddAudioButton() {
+        //Move this to a setup variable
+        //Will throw a NullPointerException if no project is open.
+        ObservableList<String> audioFiles = FXCollections.observableArrayList();
+        for (File f : CurrentDirectory.getDirectory().listFiles()) {
+            if (f.getName().toString().endsWith(".mp3")) {
+                audioFiles.add(f.getName().toString());
+            }
+        }
+
+        final FileChooser fileChooser = new FileChooser();
+        FileChooser.ExtensionFilter mp3Filter = new FileChooser.ExtensionFilter("MP3 files (.mp3)", "*.mp3");
+        FileChooser.ExtensionFilter allFilter = new FileChooser.ExtensionFilter("All files", "*");
+        fileChooser.getExtensionFilters().add(mp3Filter);
+        fileChooser.getExtensionFilters().add(allFilter);
+        try {
+            File sourceFile = fileChooser.showOpenDialog(new Stage());
+            String destName = CurrentDirectory.getDirectory().getAbsolutePath().toString()+System.getProperty("file.separator")+sourceFile.getName().toString();
+            File destFile = new File(destName);
+            Files.copy(sourceFile.toPath(), destFile.toPath());
+            audioFiles.add(sourceFile.getName().toString());
+            audioList.setItems(audioFiles);
+            //Change to multi-catch.
+        }catch(IOException e){//Both of these arise if the open operation is cancelled, such as by closing the FileChooser.
+            new WarningDialogue("The operation was aborted.");
+        }catch(NullPointerException e){
+            new WarningDialogue("The operation was aborted.");
         }
     }
 }

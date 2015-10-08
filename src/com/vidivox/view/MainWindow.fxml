@@ -70,10 +70,10 @@
     </right>
     <left>
         <ToolBar fx:id="audioOptionBar" orientation="VERTICAL" prefHeight="120.0" prefWidth="125.0" visible="false">
-        <ListView prefWidth="125.0">
+        <ListView fx:id="audioList" prefWidth="125.0">
 
         </ListView>
-            <Button mnemonicParsing="false" prefHeight="25.0" prefWidth="125.0" text="Add..." >
+            <Button mnemonicParsing="false" prefHeight="25.0" prefWidth="125.0" text="Add..." onAction="#handleAddAudioButton">
                 <tooltip>
                     <Tooltip text="Add an audio file to the list"/>
                 </tooltip>

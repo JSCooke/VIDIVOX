@@ -11,6 +11,11 @@ import java.io.File;
 //Jayden note (Disregard this comment if I forgot to take this out) - this needs to be more modular
 public class CurrentDirectory {
     private static CurrentDirectory currentDirectory;
+
+    public static File getDirectory() {
+        return directory;
+    }
+
     private static File directory;
     private static String name;
     private static String path;
