@@ -48,7 +48,6 @@ public class ManifestController {
                  w1.append(s1.nextLine());
              }
              w1.close();
-             s1.close();
              PrintWriter w2 = new PrintWriter(manifest);
              Scanner s2 = new Scanner(temporary);
              //Clear the file
@@ -72,9 +71,14 @@ public class ManifestController {
     }
 
     public void addAudio(String audioName) throws FileNotFoundException {
-        PrintWriter w = new PrintWriter(manifest);
-        w.append(audioName);
-        w.close();
+        try {
+            FileWriter w = new FileWriter(manifest,true);
+            w.append("\n"+audioName);
+            w.close();
+        }catch(IOException e){
+            //This should be unreachable.
+            new WarningDialogue("A manifest error has occurred. Try reopening the project.");
+        }
     }
 
 }

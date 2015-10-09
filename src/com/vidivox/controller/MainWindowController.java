@@ -389,6 +389,7 @@ public class MainWindowController {
      * This entails navigating to a directory, and creating a folder, then setting that folder up as the CurrentDirectory.
      */
     private void handleNewProjectButton() {
+        //Perhaps clear the current values in open, then call open at the end of this.
         try {
             //Call the directory chooser, which generates a window based on the user's OS.
             DirectoryChooser dirChooser = new DirectoryChooser();
@@ -436,6 +437,8 @@ public class MainWindowController {
             Files.copy(sourceFile.toPath(), destFile.toPath());
             audioFiles.add(sourceFile.getName().toString());
             audioList.setItems(audioFiles);
+            ManifestController manifest = new ManifestController(CurrentDirectory.getDirectory());
+            manifest.addAudio(sourceFile.getName().toString());
         }catch(IOException | NullPointerException e){//Both of these arise if the open operation is cancelled, such as by closing the FileChooser.
             new WarningDialogue("The operation was aborted.");
         }
