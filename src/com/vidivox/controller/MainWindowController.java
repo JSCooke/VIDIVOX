@@ -1,6 +1,7 @@
 package com.vidivox.controller;
 
 import com.vidivox.Generators.FestivalSpeech;
+import com.vidivox.Generators.ManifestController;
 import com.vidivox.Generators.VideoController;
 import com.vidivox.view.WarningDialogue;
 import javafx.animation.FadeTransition;
@@ -24,6 +25,7 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.reflect.Array;
 import java.nio.file.Files;
@@ -88,7 +90,14 @@ public class MainWindowController {
         fileChooser.getExtensionFilters().add(mp4Filter);
         fileChooser.getExtensionFilters().add(allFilter);
         File file = fileChooser.showOpenDialog(new Stage());
-        openNewVideo(file);
+        try {
+            ManifestController manifest = new ManifestController(CurrentDirectory.getDirectory());
+            manifest.setVideo(file.getName());
+            openNewVideo(file);
+        }catch(NullPointerException | FileNotFoundException e){
+            new WarningDialogue("You must open a project before you can add a video to it.");
+        }
+
     }
 
     private void openNewVideo(File file){
@@ -427,10 +436,7 @@ public class MainWindowController {
             Files.copy(sourceFile.toPath(), destFile.toPath());
             audioFiles.add(sourceFile.getName().toString());
             audioList.setItems(audioFiles);
-            //Change to multi-catch.
-        }catch(IOException e){//Both of these arise if the open operation is cancelled, such as by closing the FileChooser.
-            new WarningDialogue("The operation was aborted.");
-        }catch(NullPointerException e){
+        }catch(IOException | NullPointerException e){//Both of these arise if the open operation is cancelled, such as by closing the FileChooser.
             new WarningDialogue("The operation was aborted.");
         }
     }
