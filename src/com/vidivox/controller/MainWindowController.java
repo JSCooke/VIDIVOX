@@ -2,6 +2,7 @@ package com.vidivox.controller;
 
 import com.vidivox.Generators.FestivalSpeech;
 import com.vidivox.Generators.ManifestController;
+import com.vidivox.Generators.VideoController;
 import com.vidivox.view.WarningDialogue;
 import javafx.animation.FadeTransition;
 import javafx.collections.FXCollections;
@@ -554,7 +555,6 @@ public class MainWindowController {
     private void handleRemoveAudioButton(){
         //Get all the items on the list, and all the selected items.
         try {
-            ObservableList<String> audioFiles = audioList.getItems();
             ObservableList<String> selected = audioList.getSelectionModel().getSelectedItems();
             ManifestController manifest = new ManifestController(CurrentDirectory.getDirectory());
             //Notify the user if they haven't selected an item, and do nothing else.
@@ -562,12 +562,13 @@ public class MainWindowController {
                 new WarningDialogue("Please select an item, then press Remove");
                 return;
             }
-            //Delete the selected files from the project folder.
             List<String> fileNames = manifest.getAudio();
             List<File> files = new LinkedList<>();
+            //Creates a list of Files from the filenames in the manifest.
             for (String s:fileNames){
                 files.add(new File(CurrentDirectory.getDirectory().getName()+System.getProperty("file.separator")+s));
             }
+            //Delete the selected files from the project folder.
             try {
                 for (File f : files) {
                     if (selected.contains(f.getName())) {
@@ -580,7 +581,7 @@ public class MainWindowController {
             //Update the manifest.
             manifest.removeAudio(selected);
             //Update the list.
-            audioFiles = manifest.getAudio();
+            ObservableList<String> audioFiles = manifest.getAudio();
             //If the list from the manifest isn't empty, update the ListView to show it.
             if (!audioFiles.isEmpty()) {
                 audioList.setItems(audioFiles);
@@ -643,8 +644,20 @@ public class MainWindowController {
             WarningDialogue.genericError("Manifest not found.");
         }
     }
+    //Needs further development on a linux machine.
     @FXML
     private void handleMergeAudioButton() {
-
+        try {
+            ManifestController manifest = new ManifestController(CurrentDirectory.getDirectory());
+            ObservableList<String> selected = audioList.getSelectionModel().getSelectedItems();
+            File videoFile = new File(CurrentDirectory.getDirectory().getName() + System.getProperty("file.separator") + manifest.getVideo());
+            VideoController videoController = new VideoController(videoFile);
+            for (String s : selected) {
+                videoController.mergeAudio(new File(CurrentDirectory.getDirectory().getName() + System.getProperty("file.separator") + s),videoFile);
+            }
+        }catch (FileNotFoundException e) {
+            //The way the GUI is designed, this is unreachable.
+            WarningDialogue.genericError("No video file was found.");
+        }
     }
 }
