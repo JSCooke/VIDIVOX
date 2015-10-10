@@ -9,7 +9,6 @@ import java.io.File;
  * Created by Jayden Cooke on 7/10/2015.
  * Holds the currently open project, and details about the previous project for reloading purposes.
  */
-//Jayden note (Disregard this comment if I forgot to take this out) - this needs to be more modular
 public class CurrentDirectory {
     private static CurrentDirectory currentDirectory;
     private static File directory;
@@ -75,6 +74,10 @@ public class CurrentDirectory {
         directory=new File(pathAndName);
     }
 
+    /**
+     * Gets the current directory and returns it.
+     * @return The current directory.
+     */
     public static File getDirectory() {
         return directory;
     }

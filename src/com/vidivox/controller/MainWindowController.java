@@ -5,7 +5,6 @@ import com.vidivox.Generators.ManifestController;
 import com.vidivox.Generators.VideoController;
 import com.vidivox.view.WarningDialogue;
 import javafx.animation.FadeTransition;
-import javafx.beans.property.ListProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -29,14 +28,22 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.reflect.Array;
 import java.nio.file.Files;
-import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
-
+/**
+ * @author Matthew Canham, Jayden Cooke
+ * This is the controller for all the buttons and controls in the VIDIVOX window.
+ * This class is very large because it is the only class that can interact with the FXML file, and because VIDIVOX only has a single window.
+ */
 public class MainWindowController {
 
+    //This field is legacy code in the beta version, to interact with Matthew's code to open the video.
     private File currentVideoLocation;
 
+    /*
+     * Each of these FXML fields is separate so that the code can read the file.
+     * They all represent a node on the main window.
+     */
     @FXML
     private MediaView mainMediaViewer = new MediaView();
     private MediaPlayer mainMediaPlayer;
@@ -83,42 +90,63 @@ public class MainWindowController {
     @FXML
     private MenuItem openVideoButton;
 
+    /**
+     * Handles the code around opening a video.
+     * Actually opening the video is delegated to the helper method, openNewVideo
+     * This simply updates the project and creates the FileChooser window.
+     */
     @FXML
     private void handleOpenVideoButton(){
+        //Standard FileChooser window, for whatever platform this program is running on.
         final FileChooser fileChooser = new FileChooser();
+        //Allows the option for only .mp4 files to be visible.
         FileChooser.ExtensionFilter mp4Filter = new FileChooser.ExtensionFilter("MP4 files (.mp4)", "*.mp4");
-        FileChooser.ExtensionFilter allFilter = new FileChooser.ExtensionFilter("All files", "*");
         fileChooser.getExtensionFilters().add(mp4Filter);
+        //Allows the option for all files to be visible, as is standard.
+        FileChooser.ExtensionFilter allFilter = new FileChooser.ExtensionFilter("All files", "*");
         fileChooser.getExtensionFilters().add(allFilter);
+        //Gets the video file, by showing the FileChooser to the user.
         File file = fileChooser.showOpenDialog(new Stage());
         try {
+            //Updates the manifest to reflect the new video.
             ManifestController manifest = new ManifestController(CurrentDirectory.getDirectory());
             manifest.setVideo(file.getName());
+            //Calls the helper method to actually open the specified file.
             openNewVideo(file);
         }catch(NullPointerException | FileNotFoundException e){
+            //These errors are thrown when no directory has been chosen for the project.
+            //This is actually unreachable because of the GUI's design.
             new WarningDialogue("You must open a project before you can add a video to it.");
         }
 
     }
 
+    /**
+     * Helper method for opening the file.
+     * Deals mainly with GUI components.
+     * @param file - The video to open.
+     */
     private void openNewVideo(File file){
+        //Check the file exists.
         if (file != null) {
             try {
-
                 //Get rid of the current video that is playing if there is one
                 if(mainMediaPlayer != null){
                     mainMediaPlayer.dispose();
                 }
-
                 currentVideoLocation = file;
+                //JavaFX MediaView requires a MediaPlayer object, which requires a Media object, which requires a File.
                 mainMediaPlayer = new MediaPlayer(new Media(file.toURI().toString()));
                 mainMediaViewer.setMediaPlayer(mainMediaPlayer);
+                //Calls methods to set up various GUI effects, such as the slider, and the resizable window.
                 initaliseResizeListener();
                 initalisePlayEnvironment();
+                //Enables video related buttons, which are disabled by default.
                 addSpeechButton.setDisable(false);
                 playPauseButton.setDisable(false);
 
             } catch(MediaException e) {
+                //This occurs when a non-mp4 file is passed in, and notifies the user.
                 if( e.getType() == MediaException.Type.MEDIA_UNSUPPORTED ){
                     new WarningDialogue("Sorry, we didn't recognise that file type. Currently VIDIVOX supports MP4 files.");
                 }
@@ -126,6 +154,10 @@ public class MainWindowController {
         }
     }
 
+    /**
+     * Plays and pauses the video.
+     * This is made easy by the MediaPlayer functions.
+     */
     @FXML
     private void handlePlayPauseButton(){
         try {
@@ -139,6 +171,11 @@ public class MainWindowController {
         }
     }
 
+    /**
+     * Previews the speech entered in the speech area.
+     * The complex code is wrapped in the FestivalSpeech class.
+     * This method simply gets the text from the TextArea and passes it on.
+     */
     @FXML
     private void handleSpeechPreviewButton(){
         String textToSay = mainSpeechTextArea.getText();
@@ -146,67 +183,80 @@ public class MainWindowController {
         festival.speak();
     }
 
+    /**
+     * This is a helper method, as most of the fading animations require this code.
+     * This reduces code duplication.
+     * @param t - The animation object.
+     */
     private void playFadingAnimation(FadeTransition t){
-        //Reduces code duplication by moving this repeated code here.
         t.setFromValue(1.0);
         t.setToValue(0.0);
         t.playFromStart();
     }
 
+    /**
+     * Saves the text to speech to an MP3 file, in the destination of the user's choice.
+     * Again, most of this task is done by the FestivalSpeech class.
+     */
     @FXML
     private void handleSaveAudioButton(){
         final FileChooser fileChooser = new FileChooser();
+        //Makes only mp3 files visible, as is the standard.
         FileChooser.ExtensionFilter mp3Filter = new FileChooser.ExtensionFilter("MP3 audio (.mp3)", "*.mp3");
-        FileChooser.ExtensionFilter allFilter = new FileChooser.ExtensionFilter("All files", "*");
         fileChooser.getExtensionFilters().add(mp3Filter);
+        //Makes all files visible, as an option.
+        FileChooser.ExtensionFilter allFilter = new FileChooser.ExtensionFilter("All files", "*");
         fileChooser.getExtensionFilters().add(allFilter);
+        //This alters the heading in the FileChooser.
         fileChooser.setTitle("Save speech to mp3 file");
+        //A default filename is set for the user.
         fileChooser.setInitialFileName("Dialogue.mp3");
         File file = fileChooser.showSaveDialog(new Stage());
         FestivalSpeech textToSpeak = new FestivalSpeech(mainSpeechTextArea.getText());
         textToSpeak.exportToMP3(file);
     }
 
+    /**
+     * Adds the audio to the video.
+     * This code was written before the implementation of the project structure, and so does not use the Audio list.
+     */
     @FXML
     private void handleAddToVideoButton(){
-
         //Check if there is a video currently loaded
         if(currentVideoLocation == null){
             new WarningDialogue("You must open a video from the file menu before you can add speech to it.");
             return;
         }
-
         //Select the location of the new video that will be created.
         final FileChooser fileChooser = new FileChooser();
         FileChooser.ExtensionFilter mp4Filter = new FileChooser.ExtensionFilter("MP4 video (.mp4)", "*.mp4");
-        FileChooser.ExtensionFilter allFilter = new FileChooser.ExtensionFilter("All files", "*");
         fileChooser.getExtensionFilters().add(mp4Filter);
+        FileChooser.ExtensionFilter allFilter = new FileChooser.ExtensionFilter("All files", "*");
         fileChooser.getExtensionFilters().add(allFilter);
         fileChooser.setTitle("Save video with speech");
         fileChooser.setInitialFileName("My_New_Video.mp4");
         File newVideoFile = fileChooser.showSaveDialog(new Stage());
-
         //Create new audio file from text in the textbox and export it to mp3.
         //Save the location where this is saved as a file.
         File audioFile = new File("temp/tempAudioFile.mp3");
-
         FestivalSpeech text = new FestivalSpeech(mainSpeechTextArea.getText());
         text.exportToMP3(audioFile);
-
         //Create new video controller class with the current video
         VideoController vc = new VideoController(currentVideoLocation);
-
         //Call the mergeAudio() method
         vc.mergeAudio(audioFile, newVideoFile);
-
+        //This is a less-than-ideal solution.
         new WarningDialogue("Great, you will now need to open the new file that you saved from the file menu.");
-
-
     }
 
+    /**
+     * The method in charge of the fading out of the GUI while watching a video.
+     * Every time the mouse moves, the fade is updated.
+     */
     @FXML
     private void handleMouseMoved() {
         try {
+            //Creates the fading animations.
             FadeTransition menuFT = new FadeTransition(Duration.millis(10000), mainMenuBar);
             FadeTransition videoFT = new FadeTransition(Duration.millis(10000), videoOptionBar);
             FadeTransition sliderFT = new FadeTransition(Duration.millis(10000), mainProgressSlider);
@@ -229,12 +279,17 @@ public class MainWindowController {
         }
     }
 
+    /**
+     * This method has little functionality, just makes the toolbars appear with a fade, rather than suddenly appearing.
+     */
     @FXML
     private void handleAddSpeechButton() {
+        //If the toolbar is already visible, do nothing.
+        if (speechOptionBar.isVisible()){
+            return;
+        }
+        //The text listener handles code to do with text input. It isn't initialised until the toolbar is visible.
         initaliseTextListener();
-            if (speechOptionBar.isVisible()){
-                return;
-            }
         speechOptionBar.setVisible(true);
         FadeTransition speechFT = new FadeTransition(Duration.millis(100), speechOptionBar);
         //Can't use the normal method here, its a fade in, not a fade out.
@@ -243,8 +298,12 @@ public class MainWindowController {
         speechFT.playFromStart();
     }
 
+    /**
+     * This method has little functionality, just makes the toolbars appear with a fade, rather than suddenly appearing.
+     */
     @FXML
     private void handleManageAudioButton() {
+        //If the toolbar is already visible, do nothing.
         if (audioOptionBar.isVisible()){
             return;
         }
@@ -256,13 +315,19 @@ public class MainWindowController {
         audioFT.playFromStart();
     }
 
+    /**
+     * Like the functions to make toolbars visible, this function simply makes the toolbar fade gradually, instead of sharply disappearing.
+     */
     @FXML
     private void handleCloseSpeechButton() {
+        //If the toolbar isn't visible, do nothing.
         if (!speechOptionBar.isVisible()){
             return;
         }
+        //Fade out.
         FadeTransition speechFT = new FadeTransition(Duration.millis(100), speechOptionBar);
         playFadingAnimation(speechFT);
+        //Change the visibility after the animation finishes.
         speechFT.setOnFinished(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent arg0) {
@@ -273,14 +338,18 @@ public class MainWindowController {
 
     @FXML
     private void handleCloseAudioButton() {
+        //If the toolbar isn't visible, do nothing.
         if (!audioOptionBar.isVisible()){
             return;
         }
+        //Makes the speech toolbar disappear too, if its visible.
         if (speechOptionBar.isVisible()){
             handleCloseSpeechButton();
         }
+        //Fade out.
         FadeTransition speechFT = new FadeTransition(Duration.millis(100), audioOptionBar);
         playFadingAnimation(speechFT);
+        //Change the visibility after the animation finishes.
         speechFT.setOnFinished(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent arg0) {
@@ -289,15 +358,17 @@ public class MainWindowController {
         });
     }
 
+    /**
+     * Helper method to handle the sliders for volume and progress.
+     * This would be too large to fit in the method to open the video.
+     */
     private void initalisePlayEnvironment(){
-
         mainMediaPlayer.setOnReady(new Runnable() {
             @Override
             public void run() {
                 mainProgressSlider.setValue(0);
                 mainProgressSlider.setMin(0);
                 mainProgressSlider.setMax(mainMediaPlayer.getTotalDuration().toMillis());
-
                 //Add a timer to check the current position of the video
                 TimerTask updateSliderPosition = new TimerTask() {
                     @Override
@@ -312,12 +383,10 @@ public class MainWindowController {
                 };
                 final Timer durationTimer = new Timer();
                 durationTimer.schedule(updateSliderPosition, 0, 100);
-
                 //Listen for changes made to the progress slider by the user
                 mainProgressSlider.valueProperty().addListener(new ChangeListener<Number>() {
                     @Override
                     public void changed(ObservableValue<? extends Number> observableValue, Number oldValue, Number newValue) {
-
                         //Add a threshold that will stop the video skipping when the timer updates the slider position
                         if (Math.abs((double) oldValue - (double) newValue) > 150) {
                             mainMediaPlayer.seek(new Duration((Double) newValue));
@@ -339,17 +408,21 @@ public class MainWindowController {
         });
     }
 
+    /**
+     * Helper method to set up window resizing. This would be too large to fit in the method to open the video.
+     */
     private void initaliseResizeListener(){
         //Sets MediaViewer to the size of the window on launch.
         mainMediaViewer.setFitWidth(mainWindow.getScene().getWidth());
         mainMediaViewer.setFitHeight(mainWindow.getScene().getHeight());
-        //Listen for changes in the scene's width, and change the mediaview accordingly.
+        //Listen for changes in the scene's width, and change the MediaView accordingly.
         mainWindow.getScene().widthProperty().addListener(new ChangeListener<Number>() {
-            @Override public void changed(ObservableValue<? extends Number> observableValue, Number oldSceneWidth, Number newSceneWidth) {
+            @Override
+            public void changed(ObservableValue<? extends Number> observableValue, Number oldSceneWidth, Number newSceneWidth) {
                 mainMediaViewer.setFitWidth(mainWindow.getScene().getWidth());
             }
         });
-        //Listen for changes in the scene's height, and change the mediaview accordingly.
+        //Listen for changes in the scene's height, and change the MediaView accordingly.
         mainWindow.getScene().heightProperty().addListener(new ChangeListener<Number>() {
             @Override
             public void changed(ObservableValue<? extends Number> observableValue, Number oldSceneHeight, Number newSceneHeight) {
@@ -357,20 +430,26 @@ public class MainWindowController {
             }
         });
     }
+
+    /**
+     * This handles minor GUI functions, like disabling previews of empty strings and enforcing a word limit.
+     * This is called whenever the TextArea becomes visible, but is too long for that method.
+     */
     private void initaliseTextListener() {
         mainSpeechTextArea.textProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> observableValue, String oldValue, String newValue) {
-                if (newValue.isEmpty()){
+                //If the text is empty, disable text-related buttons. If not, enable them.
+                if (newValue.isEmpty()) {
                     speechPreviewButton.setDisable(true);
                     speechSaveButton.setDisable(true);
-                }else{
+                } else {
                     speechPreviewButton.setDisable(false);
                     speechSaveButton.setDisable(false);
                 }
-                //If more than 20 words have been entered, don't allow further text entry.
+                //If more than 20 words have been entered, don't allow further text entry, and inform the user.
                 String[] words = newValue.split(" ");
-                if (Array.getLength(words)>20){
+                if (Array.getLength(words) > 20) {
                     mainSpeechTextArea.setText(oldValue);
                     new WarningDialogue("You can't enter more than 20 words, please enter less.");
                 }
@@ -378,17 +457,20 @@ public class MainWindowController {
         });
     }
 
+    /**
+     * Closes the window when the close menu object is pressed.
+     */
     @FXML
     private void handleCloseMenuButton() {
         Stage stage = (Stage) mainWindow.getScene().getWindow();
         stage.close();
     }
 
-    @FXML
     /**
      * Allows the user to create a new project.
      * This entails navigating to a directory, and creating a folder, then setting that folder up as the CurrentDirectory.
      */
+    @FXML
     private void handleNewProjectButton() {
         //Perhaps clear the current values in open, then call open at the end of this.
         try {
@@ -412,12 +494,13 @@ public class MainWindowController {
         }
     }
 
-    @FXML
+
     /**
      * Adds audio chosen by the user to the list of audio files in the project.
      */
+    @FXML
     private void handleAddAudioButton() {
-        //Move this to a setup variable
+        //Could move this to a setup method.
         //Will throw a NullPointerException if no project is open.
         ObservableList<String> audioFiles = FXCollections.observableArrayList();
         for (File f : CurrentDirectory.getDirectory().listFiles()) {
@@ -425,19 +508,22 @@ public class MainWindowController {
                 audioFiles.add(f.getName().toString());
             }
         }
-
+        //Gets the audio file.
         final FileChooser fileChooser = new FileChooser();
         FileChooser.ExtensionFilter mp3Filter = new FileChooser.ExtensionFilter("MP3 files (.mp3)", "*.mp3");
-        FileChooser.ExtensionFilter allFilter = new FileChooser.ExtensionFilter("All files", "*");
         fileChooser.getExtensionFilters().add(mp3Filter);
+        FileChooser.ExtensionFilter allFilter = new FileChooser.ExtensionFilter("All files", "*");
         fileChooser.getExtensionFilters().add(allFilter);
         try {
             File sourceFile = fileChooser.showOpenDialog(new Stage());
+            //Copies source file into the project.
             String destName = CurrentDirectory.getDirectory().getAbsolutePath().toString()+System.getProperty("file.separator")+sourceFile.getName().toString();
             File destFile = new File(destName);
             Files.copy(sourceFile.toPath(), destFile.toPath());
+            //Adds the copied file to the list visible to the user.
             audioFiles.add(sourceFile.getName().toString());
             audioList.setItems(audioFiles);
+            //Updates the manifest to reflect the new file.
             ManifestController manifest = new ManifestController(CurrentDirectory.getDirectory());
             manifest.addAudio(sourceFile.getName().toString());
         }catch(NullPointerException e){//Both of these arise if the open operation is cancelled, such as by closing the FileChooser.
@@ -447,14 +533,21 @@ public class MainWindowController {
         }
     }
 
+    /**
+     * Removes audio files from the list, manifest and directory.
+     * There is a known bug that this may remove all files from the list, not just one.
+     */
     @FXML
     private void handleRemoveAudioButton(){
+        //Get all the items on the list, and all the selected items.
         ObservableList<String> audioFiles = audioList.getItems();
         ObservableList<String> selected = audioList.getSelectionModel().getSelectedItems();
+        //Notify the user if they haven't selected an item, and do nothing else.
         if (selected.isEmpty()) {
             new WarningDialogue("Please select an item, then press Remove");
             return;
         }
+        //Delete the selected files from the project folder.
         File[] files = CurrentDirectory.getDirectory().listFiles();
         try {
             for (File f : files) {
@@ -465,8 +558,10 @@ public class MainWindowController {
         }catch(IOException e){
             new WarningDialogue("A file you were trying to delete was not found. This shouldn't affect your project.");
         }
+        //Update the manifest.
         ManifestController manifest = new ManifestController(CurrentDirectory.getDirectory());
         manifest.removeAudio(selected);
+        //Update the list. This could be updated to use the manifest, to solve the bug.
         audioFiles.remove(selected);
         audioList.setItems(audioFiles);
     }

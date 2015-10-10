@@ -22,6 +22,9 @@ public class ManifestController {
         this.manifest = new File(projectDir.getAbsolutePath()+System.getProperty("file.separator")+"Manifest.vvx");
     }
 
+    /**
+     * Creates the manifest file.
+     */
     public void create() {
         try {
             manifest.createNewFile();
@@ -31,10 +34,18 @@ public class ManifestController {
         }
     }
 
+    /**
+     * Updates the video entry in the manifest.
+     * @param videoName - The name to update to.
+     * @throws FileNotFoundException - Thrown so that other functions can be stopped if an error occurs in this call.
+     * For example, if an error occurs updating the manifest, stop what was happening in the calling method.
+     * This method could be shortened.
+     */
      public void setVideo(String videoName) throws FileNotFoundException {
          try {
              //Trim the manifest name from the path, returning the project directory.
              String path = manifest.getPath().substring(0,manifest.getPath().lastIndexOf(System.getProperty("file.separator")));
+             //Create a temporary file.
              File temporary = new File(path + System.getProperty("file.separator") + "Temp.vvx");
              temporary.createNewFile();
              Scanner s1 = new Scanner(manifest);
@@ -60,6 +71,7 @@ public class ManifestController {
              }
              w2.close();
              s2.close();
+             //Delete the temporary file
              Files.delete(temporary.toPath());
          }catch (IOException e){
              //This should be unreachable, unless a temporary file already exists.
@@ -67,11 +79,23 @@ public class ManifestController {
          }
      }
 
+    /**
+     * Reads the manifest and gets the video.
+     * @return  - the name of the video, as a string.
+     * @throws FileNotFoundException - Thrown so that other functions can be stopped if an error occurs in this call.
+     * For example, if an error occurs updating the manifest, stop what was happening in the calling method.
+     */
     public String getVideo() throws FileNotFoundException {
         Scanner r = new Scanner(manifest);
         return r.nextLine();
     }
 
+    /**
+     * Adds an audio file to the end of the manifest.
+     * @param audioName - the name of the file to add.
+     * @throws FileNotFoundException - Thrown so that other functions can be stopped if an error occurs in this call.
+     * For example, if an error occurs updating the manifest, stop what was happening in the calling method.
+     */
     public void addAudio(String audioName) throws FileNotFoundException {
         try {
             FileWriter w = new FileWriter(manifest,true);
@@ -83,6 +107,10 @@ public class ManifestController {
         }
     }
 
+    /**
+     * Removes a list of audio files from the manifest.
+     * @param files - the names of the files to remove.
+     */
     public void removeAudio(ObservableList<String> files) {
         try{
             //Trim the manifest name from the path, returning the project directory.
@@ -97,12 +125,14 @@ public class ManifestController {
             w1.append(s1.nextLine());
             while (s1.hasNextLine()) {
                 curr = s1.nextLine();
+                //If the list of files to delete doesn't contain the current file name, skip it.
                 if (!files.contains(curr)){
                     w1.append("\n"+curr);
                 }
             }
             w1.close();
             s1.close();
+            //Delete the old manifest, and change the temporary file to the manifest.
             Files.delete(manifest.toPath());
             temporary.renameTo(manifest);
             manifest = temporary;
