@@ -28,6 +28,7 @@ import java.io.IOException;
 import java.lang.reflect.Array;
 import java.net.URI;
 import java.nio.file.Files;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -552,29 +553,33 @@ public class MainWindowController {
     @FXML
     private void handleRemoveAudioButton(){
         //Get all the items on the list, and all the selected items.
-        ObservableList<String> audioFiles = audioList.getItems();
-        ObservableList<String> selected = audioList.getSelectionModel().getSelectedItems();
-        //Notify the user if they haven't selected an item, and do nothing else.
-        if (selected.isEmpty()) {
-            new WarningDialogue("Please select an item, then press Remove");
-            return;
-        }
-        //Delete the selected files from the project folder.
-        File[] files = CurrentDirectory.getDirectory().listFiles();
         try {
-            for (File f : files) {
-                if (selected.contains(f.getName())) {
-                    Files.deleteIfExists(f.toPath());
-                }
+            ObservableList<String> audioFiles = audioList.getItems();
+            ObservableList<String> selected = audioList.getSelectionModel().getSelectedItems();
+            ManifestController manifest = new ManifestController(CurrentDirectory.getDirectory());
+            //Notify the user if they haven't selected an item, and do nothing else.
+            if (selected.isEmpty()) {
+                new WarningDialogue("Please select an item, then press Remove");
+                return;
             }
-        }catch(IOException e){
-            new WarningDialogue("A file you were trying to delete was not found. This shouldn't affect your project.");
-        }
-        //Update the manifest.
-        ManifestController manifest = new ManifestController(CurrentDirectory.getDirectory());
-        manifest.removeAudio(selected);
-        //Update the list.
-        try {
+            //Delete the selected files from the project folder.
+            List<String> fileNames = manifest.getAudio();
+            List<File> files = new LinkedList<>();
+            for (String s:fileNames){
+                files.add(new File(CurrentDirectory.getDirectory().getName()+System.getProperty("file.separator")+s));
+            }
+            try {
+                for (File f : files) {
+                    if (selected.contains(f.getName())) {
+                        Files.deleteIfExists(f.toPath());
+                    }
+                }
+            }catch(IOException e){
+                new WarningDialogue("A file you were trying to delete was not found. This shouldn't affect your project.");
+            }
+            //Update the manifest.
+            manifest.removeAudio(selected);
+            //Update the list.
             audioFiles = manifest.getAudio();
             //If the list from the manifest isn't empty, update the ListView to show it.
             if (!audioFiles.isEmpty()) {
@@ -637,5 +642,9 @@ public class MainWindowController {
             //This means the manifest doesn't exist, and isn't reachable. (It would have caused an exception earlier)
             WarningDialogue.genericError("Manifest not found.");
         }
+    }
+    @FXML
+    private void handleMergeAudioButton() {
+
     }
 }
