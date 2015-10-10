@@ -23,6 +23,22 @@ public class CurrentDirectory {
     private CurrentDirectory() {}
 
     /**
+     * Sets the current project directory.
+     * This could replace the addPath and addName methods, but old code still uses them.
+     * @param directory
+     */
+    public static void setDirectory (File directory) {
+        if (currentDirectory == null) {
+            currentDirectory = new CurrentDirectory();
+        }
+        CurrentDirectory.directory = directory;
+        //Updates fields and backups.
+        CurrentDirectory.addName(directory.getName());
+        //This monster of a call gets the path and trims the name.
+        CurrentDirectory.addPath(directory.getPath().substring(0,directory.getPath().lastIndexOf(System.getProperty("file.separator"))));
+    }
+
+    /**
      * Updates the name and nameBackup variables based on user input.
      * @param name - the name of the new current directory.
      */

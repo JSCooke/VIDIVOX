@@ -2,7 +2,6 @@ package com.vidivox.controller;
 
 import com.vidivox.Generators.FestivalSpeech;
 import com.vidivox.Generators.ManifestController;
-import com.vidivox.Generators.VideoController;
 import com.vidivox.view.WarningDialogue;
 import javafx.animation.FadeTransition;
 import javafx.collections.FXCollections;
@@ -27,7 +26,9 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.reflect.Array;
+import java.net.URI;
 import java.nio.file.Files;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 /**
@@ -38,7 +39,7 @@ import java.util.TimerTask;
 public class MainWindowController {
 
     //This field is legacy code in the beta version, to interact with Matthew's code to open the video.
-    private File currentVideoLocation;
+    private File currentVideo;
 
     /*
      * Each of these FXML fields is separate so that the code can read the file.
@@ -130,11 +131,19 @@ public class MainWindowController {
         //Check the file exists.
         if (file != null) {
             try {
-                //Get rid of the current video that is playing if there is one
+                //Get rid of the current video that is playing if there is one.
                 if(mainMediaPlayer != null){
+                    for (File f:CurrentDirectory.getDirectory().listFiles()){
+                        if (f.equals(new File(new URI(mainMediaPlayer.getMedia().getSource())))){
+                            Files.delete(f.toPath());
+                        }
+                    }
                     mainMediaPlayer.dispose();
                 }
-                currentVideoLocation = file;
+                //Copy the new video into the project.
+                File destFile = new File(CurrentDirectory.getDirectory().getAbsolutePath().toString()+System.getProperty("file.separator")+file.getName());
+                Files.copy(file.toPath(), destFile.toPath());
+                currentVideo = file;
                 //JavaFX MediaView requires a MediaPlayer object, which requires a Media object, which requires a File.
                 mainMediaPlayer = new MediaPlayer(new Media(file.toURI().toString()));
                 mainMediaViewer.setMediaPlayer(mainMediaPlayer);
@@ -150,6 +159,12 @@ public class MainWindowController {
                 if( e.getType() == MediaException.Type.MEDIA_UNSUPPORTED ){
                     new WarningDialogue("Sorry, we didn't recognise that file type. Currently VIDIVOX supports MP4 files.");
                 }
+            } catch(IOException e){
+                //This shouldn't happen, because of the if statement at the beginning of this method.
+                WarningDialogue.genericError("An error has occurred while copying files.");
+            } catch (java.net.URISyntaxException e){
+                //This is for debugging. The only code that can throw this is computer controlled.
+                WarningDialogue.genericError("An error has occurred while deleting the old file.");
             }
         }
     }
@@ -223,7 +238,7 @@ public class MainWindowController {
     @FXML
     private void handleAddToVideoButton(){
         //Check if there is a video currently loaded
-        if(currentVideoLocation == null){
+        if(currentVideo == null){
             new WarningDialogue("You must open a video from the file menu before you can add speech to it.");
             return;
         }
@@ -512,8 +527,8 @@ public class MainWindowController {
         fileChooser.getExtensionFilters().add(mp3Filter);
         FileChooser.ExtensionFilter allFilter = new FileChooser.ExtensionFilter("All files", "*");
         fileChooser.getExtensionFilters().add(allFilter);
+        File sourceFile = fileChooser.showOpenDialog(new Stage());
         try {
-            File sourceFile = fileChooser.showOpenDialog(new Stage());
             //Copies source file into the project.
             String destName = CurrentDirectory.getDirectory().getAbsolutePath().toString()+System.getProperty("file.separator")+sourceFile.getName().toString();
             File destFile = new File(destName);
@@ -562,5 +577,56 @@ public class MainWindowController {
         //Update the list. This could be updated to use the manifest, to solve the bug.
         audioFiles.remove(selected);
         audioList.setItems(audioFiles);
+    }
+
+    /**
+     * Opens a previously created project.
+     * This could benefit from a SwingWorker thread (or, more precisely, the JavaFX equivalent), in case the loop needs to run many times.
+     * A progress bar may also be an alternative.
+     */
+    @FXML
+    private void handleOpenProjectButton() {
+        //Ask the user to find the project.
+        DirectoryChooser dirChooser = new DirectoryChooser();
+        dirChooser.setTitle("Select project directory...");
+        File loadDirectory = dirChooser.showDialog(new Stage());
+        //Check if any of the files is a manifest.
+        boolean hasManifest = false;
+        for (File f:loadDirectory.listFiles()){
+            if(f.getName().endsWith(".vvx")){
+                hasManifest = true;
+                break;
+            }
+        }
+        //If all files are checked and no manifest is found, return.
+        if (!hasManifest){
+            new WarningDialogue("Sorry, that is not a valid project.\nOnly folders with manifests (.vvx) are valid.");
+            return;
+        }
+        //Update the CurrentDirectory class.
+        CurrentDirectory.setDirectory(loadDirectory);
+        ManifestController manifest = new ManifestController(CurrentDirectory.getDirectory());
+        try {
+            File video = new File(CurrentDirectory.getDirectory() + System.getProperty("file.separator") + manifest.getVideo());
+            openNewVideo(video);
+        }catch(FileNotFoundException e){
+            new WarningDialogue("No video was found for this project. Add one to get started!");
+            //If there is no video, the program won't allow any audio. To avoid further errors, we terminate the method here.
+            return;
+        }
+        try {
+            List<String> audio = manifest.getAudio();
+            //Populates the list with the files
+            ObservableList<String> audioFiles = FXCollections.observableArrayList();
+            for (File f : CurrentDirectory.getDirectory().listFiles()) {
+                if (audio.contains(f.getName())) {
+                    audioFiles.add(f.getName());
+                }
+            }
+            audioList.setItems(audioFiles);
+        }catch(FileNotFoundException e){
+            //This means the manifest doesn't exist, and isn't reachable. (It would have caused an exception earlier)
+            WarningDialogue.genericError("Manifest not found.");
+        }
     }
 }

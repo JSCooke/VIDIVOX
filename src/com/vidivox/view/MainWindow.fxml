@@ -88,6 +88,11 @@
                     <Tooltip text="View the speech toolbar to create your own audio"/>
                 </tooltip>
             </Button>
+            <Button mnemonicParsing="false" prefHeight="25.0" prefWidth="125.0" text="Merge Selected" onAction="#handleAddSpeechButton">
+                <tooltip>
+                    <Tooltip text="Merge the selected item into the video."/>
+                </tooltip>
+            </Button>
             <Button mnemonicParsing="false" prefHeight="25.0" prefWidth="125.0" text="Close" onAction="#handleCloseAudioButton">
                 <tooltip>
                     <Tooltip text="Close this toolbar"/>
@@ -144,6 +149,7 @@
                 <Menu mnemonicParsing="false" text="File">
                     <items>
                         <MenuItem mnemonicParsing="false" onAction="#handleNewProjectButton" text="New Project" />
+                        <MenuItem mnemonicParsing="false" onAction="#handleOpenProjectButton" text="Open Project" />
                         <MenuItem fx:id="openVideoButton" mnemonicParsing="false" onAction="#handleOpenVideoButton" text="Add/Change project video..." disable="true" />
                         <MenuItem mnemonicParsing="false" text="Close" onAction="#handleCloseMenuButton" />
                     </items>
