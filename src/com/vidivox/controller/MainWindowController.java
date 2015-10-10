@@ -29,6 +29,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.reflect.Array;
 import java.nio.file.Files;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -439,8 +440,34 @@ public class MainWindowController {
             audioList.setItems(audioFiles);
             ManifestController manifest = new ManifestController(CurrentDirectory.getDirectory());
             manifest.addAudio(sourceFile.getName().toString());
-        }catch(IOException | NullPointerException e){//Both of these arise if the open operation is cancelled, such as by closing the FileChooser.
+        }catch(NullPointerException e){//Both of these arise if the open operation is cancelled, such as by closing the FileChooser.
             new WarningDialogue("The operation was aborted.");
+        }catch(IOException e){
+            new WarningDialogue("You already added that file"); //This will need changing when I handle files at different times.
         }
+    }
+
+    @FXML
+    private void handleRemoveAudioButton(){
+        ObservableList<String> audioFiles = audioList.getItems();
+        ObservableList<String> selected = audioList.getSelectionModel().getSelectedItems();
+        if (selected.isEmpty()) {
+            new WarningDialogue("Please select an item, then press Remove");
+            return;
+        }
+        File[] files = CurrentDirectory.getDirectory().listFiles();
+        try {
+            for (File f : files) {
+                if (selected.contains(f.getName())) {
+                    Files.deleteIfExists(f.toPath());
+                }
+            }
+        }catch(IOException e){
+            new WarningDialogue("A file you were trying to delete was not found. This shouldn't affect your project.");
+        }
+        ManifestController manifest = new ManifestController(CurrentDirectory.getDirectory());
+        manifest.removeAudio(selected);
+        audioFiles.remove(selected);
+        audioList.setItems(audioFiles);
     }
 }

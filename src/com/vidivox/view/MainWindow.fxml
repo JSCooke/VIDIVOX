@@ -78,7 +78,7 @@
                     <Tooltip text="Add an audio file to the list"/>
                 </tooltip>
             </Button>
-            <Button mnemonicParsing="false" prefHeight="25.0" prefWidth="125.0" text="Remove" >
+            <Button mnemonicParsing="false" prefHeight="25.0" prefWidth="125.0" text="Remove" onAction="#handleRemoveAudioButton">
                 <tooltip>
                     <Tooltip text="Remove the selected file from the list"/>
                 </tooltip>
