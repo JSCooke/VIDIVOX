@@ -548,7 +548,6 @@ public class MainWindowController {
 
     /**
      * Removes audio files from the list, manifest and directory.
-     * There is a known bug that this may remove all files from the list, not just one.
      */
     @FXML
     private void handleRemoveAudioButton(){
@@ -574,9 +573,19 @@ public class MainWindowController {
         //Update the manifest.
         ManifestController manifest = new ManifestController(CurrentDirectory.getDirectory());
         manifest.removeAudio(selected);
-        //Update the list. This could be updated to use the manifest, to solve the bug.
-        audioFiles.remove(selected);
-        audioList.setItems(audioFiles);
+        //Update the list.
+        try {
+            audioFiles = manifest.getAudio();
+            //If the list from the manifest isn't empty, update the ListView to show it.
+            if (!audioFiles.isEmpty()) {
+                audioList.setItems(audioFiles);
+            //If it is empty, then clear the list.
+            }else{
+                audioList.getItems().clear();
+            }
+        }catch(FileNotFoundException e){
+            WarningDialogue.genericError("A manifest error occurred.");
+        }
     }
 
     /**
