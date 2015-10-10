@@ -218,7 +218,7 @@ public class MainWindowController {
 
     /**
      * Adds the audio to the video.
-     * This code was written before the implementation of the project structure, and so does not use the Audio list.
+     * This code was written on a Windows machine, and may possess bugs.
      */
     @FXML
     private void handleAddToVideoButton(){
@@ -227,26 +227,23 @@ public class MainWindowController {
             new WarningDialogue("You must open a video from the file menu before you can add speech to it.");
             return;
         }
-        //Select the location of the new video that will be created.
-        final FileChooser fileChooser = new FileChooser();
-        FileChooser.ExtensionFilter mp4Filter = new FileChooser.ExtensionFilter("MP4 video (.mp4)", "*.mp4");
-        fileChooser.getExtensionFilters().add(mp4Filter);
-        FileChooser.ExtensionFilter allFilter = new FileChooser.ExtensionFilter("All files", "*");
-        fileChooser.getExtensionFilters().add(allFilter);
-        fileChooser.setTitle("Save video with speech");
-        fileChooser.setInitialFileName("My_New_Video.mp4");
-        File newVideoFile = fileChooser.showSaveDialog(new Stage());
-        //Create new audio file from text in the textbox and export it to mp3.
-        //Save the location where this is saved as a file.
-        File audioFile = new File("temp/tempAudioFile.mp3");
+        WarningDialogue inputBox = new WarningDialogue("Please enter a name for the new audio file:","Audio",true);
+        //Create new audio file from text in the textbox and export it to mp3, as a file in the project folder.
+        File audioFile = new File(CurrentDirectory.getDirectory().getAbsolutePath()+System.getProperty("file.separator")+inputBox.getText());
         FestivalSpeech text = new FestivalSpeech(mainSpeechTextArea.getText());
         text.exportToMP3(audioFile);
-        //Create new video controller class with the current video
-        VideoController vc = new VideoController(currentVideoLocation);
-        //Call the mergeAudio() method
-        vc.mergeAudio(audioFile, newVideoFile);
-        //This is a less-than-ideal solution.
-        new WarningDialogue("Great, you will now need to open the new file that you saved from the file menu.");
+        //Adds the new file to the list.
+        ObservableList<String> audioFiles = audioList.getItems();
+        audioFiles.add(audioFile.getName().toString());
+        audioList.setItems(audioFiles);
+        try {
+            //Updates the manifest to reflect the new file.
+            ManifestController manifest = new ManifestController(CurrentDirectory.getDirectory());
+            manifest.addAudio(audioFile.getName().toString());
+        }catch(FileNotFoundException e){
+            //This shouldn't be reachable, as we create the file it refers to in the above statements.
+            WarningDialogue.genericError("Audio file was not generated correctly.");
+        }
     }
 
     /**
@@ -482,6 +479,7 @@ public class MainWindowController {
             CurrentDirectory.addPath(destDirectory.getAbsolutePath().toString());
             //Ask for user input.
             WarningDialogue inputBox = new WarningDialogue("Please enter a name for the project:", "Project", true);
+            CurrentDirectory.addName(inputBox.getText());
             //Create the directory.
             CurrentDirectory.makeDir();
             //Enable video options.

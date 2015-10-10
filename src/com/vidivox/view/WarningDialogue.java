@@ -20,6 +20,9 @@ import javafx.stage.WindowEvent;
  * Mainly used to notify the user of errors.
  */
 public class WarningDialogue{
+
+    private String textInput;
+
     /**
      * Handles normal errors.
      * @param warningText - The text to present to the user.
@@ -41,14 +44,6 @@ public class WarningDialogue{
         warningStage.initModality(Modality.APPLICATION_MODAL);
         warningStage.setTitle(titleText);
         warningStage.setMinWidth(250);
-        warningStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
-            @Override
-            public void handle(WindowEvent windowEvent) {
-                //The text entry box is only called when performing project save operations, and these must be cancelled.
-                CurrentDirectory.interrupted();
-                warningStage.close();
-            }
-        });
         Label warningLabel = new Label(warningText);
         VBox layout = new VBox(10);
         layout.getChildren().add(warningLabel);
@@ -62,8 +57,8 @@ public class WarningDialogue{
             closeButton.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent actionEvent) {
-                    //An affirmative close needs to save the input text into the CurrentDirectory class.
-                    CurrentDirectory.addName(inputField.getText());
+                    //An affirmative close needs to save the input text into the inputText field.
+                    textInput=inputField.getText();
                     warningStage.close();
                 }
             });
@@ -94,4 +89,5 @@ public class WarningDialogue{
         new WarningDialogue(message);
     }
 
+    public String getText(){ return textInput; }
 }

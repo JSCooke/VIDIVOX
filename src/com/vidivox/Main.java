@@ -24,7 +24,6 @@ public class Main extends Application {
         primaryStage.getScene().fillProperty().setValue(Color.BLACK);
         primaryStage.show();
     }
-
     public static void main(String[] args) {
         launch(args);
     }
