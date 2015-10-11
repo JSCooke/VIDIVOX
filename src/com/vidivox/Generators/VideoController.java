@@ -4,6 +4,7 @@ import com.vidivox.view.WarningDialogue;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 /**
  * @author Matthew Canham
@@ -46,6 +47,24 @@ public class VideoController {
         } catch (IOException e){
             WarningDialogue.genericError(e.getMessage());
         } catch (InterruptedException e) {
+            WarningDialogue.genericError(e.getMessage());
+        }
+    }
+
+    public void overlapAudio(List<File> audioFiles, File newAudioFile) {
+        String process = "ffmpeg";
+        int counter=0;
+        for (File f:audioFiles){
+            process+=" -i "+f.getAbsolutePath();
+            counter++;
+        }
+        process+=" -filter_complex amix=inputs="+counter+":duration=first:dropout_transition=3 "+newAudioFile.getAbsolutePath();
+        ProcessBuilder pb = new ProcessBuilder("/bin/sh", "-c", process);
+        try {
+            pb.start().waitFor();
+        } catch (InterruptedException e) {
+            WarningDialogue.genericError(e.getMessage());
+        } catch (IOException e) {
             WarningDialogue.genericError(e.getMessage());
         }
     }
