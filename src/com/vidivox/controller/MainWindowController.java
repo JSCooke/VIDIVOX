@@ -644,30 +644,17 @@ public class MainWindowController {
             WarningDialogue.genericError("Manifest not found.");
         }
     }
-
-    /**
-     * Merges the selected audio files together, and then adds them to the video.
-     * There is currently no way to:
-     *  -Add the files to a certain point in the video
-     *  -Retain the original audio
-     *  -Save the new video to the project.
-     * These are all known, and are being remedied.
-     */
+    //Needs further development on a linux machine.
     @FXML
     private void handleMergeAudioButton() {
         try {
             ManifestController manifest = new ManifestController(CurrentDirectory.getDirectory());
             ObservableList<String> selected = audioList.getSelectionModel().getSelectedItems();
             File videoFile = new File(CurrentDirectory.getDirectory().getName() + System.getProperty("file.separator") + manifest.getVideo());
-            File tempAudio = new File(CurrentDirectory.getDirectory().getName() + System.getProperty("file.separator") + "TempAudio.mp3");
-                    VideoController videoController = new VideoController(videoFile);
-            ObservableList<File> audioFiles = FXCollections.observableArrayList();
+            VideoController videoController = new VideoController(videoFile);
             for (String s : selected) {
-                audioFiles.add(new File(CurrentDirectory.getDirectory().getName() + System.getProperty("file.separator") + s));
+                videoController.mergeAudio(new File(CurrentDirectory.getDirectory().getName() + System.getProperty("file.separator") + s),videoFile);
             }
-            videoController.overlapAudio(audioFiles,tempAudio);
-            videoController.mergeAudio(tempAudio,videoFile);
-            openNewVideo(videoFile);
         }catch (FileNotFoundException e) {
             //The way the GUI is designed, this is unreachable.
             WarningDialogue.genericError("No video file was found.");
