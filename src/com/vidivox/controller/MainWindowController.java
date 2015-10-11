@@ -244,9 +244,9 @@ public class MainWindowController {
             new WarningDialogue("You must open a video from the file menu before you can add speech to it.");
             return;
         }
-        WarningDialogue inputBox = new WarningDialogue("Please enter a name for the new audio file:","Audio",true);
+        WarningDialogue inputBox = new WarningDialogue("Please enter a name for the new audio file: (A file extension will be added automatically.)","Audio",true);
         //Create new audio file from text in the textbox and export it to mp3, as a file in the project folder.
-        File audioFile = new File(CurrentDirectory.getDirectory().getAbsolutePath()+System.getProperty("file.separator")+inputBox.getText());
+        File audioFile = new File(CurrentDirectory.getDirectory().getAbsolutePath()+System.getProperty("file.separator")+inputBox.getText()+".mp3");
         FestivalSpeech text = new FestivalSpeech(mainSpeechTextArea.getText());
         text.exportToMP3(audioFile);
         //Adds the new file to the list.
