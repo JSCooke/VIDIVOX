@@ -235,7 +235,6 @@ public class MainWindowController {
 
     /**
      * Adds the audio to the video.
-     * This code was written on a Windows machine, and may possess bugs.
      */
     @FXML
     private void handleAddToVideoButton(){
@@ -350,6 +349,9 @@ public class MainWindowController {
         });
     }
 
+    /**
+     * Like the functions to make toolbars visible, this function simply makes the toolbar fade gradually, instead of sharply disappearing.
+     */
     @FXML
     private void handleCloseAudioButton() {
         //If the toolbar isn't visible, do nothing.
@@ -644,7 +646,12 @@ public class MainWindowController {
             WarningDialogue.genericError("Manifest not found.");
         }
     }
-    //Needs further development on a linux machine.
+
+    /**
+     * This method merges the audio in the selected audio files with the videos.
+     * Due to difficulties in ffmpeg calls, this is currently functioning to assignment 3 standards.
+     * This is a known, and serious, issue, and is being remedied.
+     */
     @FXML
     private void handleMergeAudioButton() {
         try {
