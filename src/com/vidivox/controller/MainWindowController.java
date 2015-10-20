@@ -4,6 +4,7 @@ import com.vidivox.Generators.FestivalSpeech;
 import com.vidivox.Generators.ManifestController;
 import com.vidivox.Generators.VideoController;
 import com.vidivox.view.WarningDialogue;
+import javafx.animation.Animation;
 import javafx.animation.FadeTransition;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -29,10 +30,8 @@ import java.io.IOException;
 import java.lang.reflect.Array;
 import java.net.URI;
 import java.nio.file.Files;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.*;
+
 /**
  * @author Matthew Canham, Jayden Cooke
  * This is the controller for all the buttons and controls in the VIDIVOX window.
@@ -93,6 +92,7 @@ public class MainWindowController {
     @FXML
     private MenuItem openVideoButton;
 
+    private List<Animation> playing = new ArrayList<Animation>();
     /**
      * Handles the code around opening a video.
      * Actually opening the video is delegated to the helper method, openNewVideo
@@ -275,13 +275,17 @@ public class MainWindowController {
             FadeTransition sliderFT = new FadeTransition(Duration.millis(10000), mainProgressSlider);
             //If the video isn't playing, or the editing bars are up, don't fade out.
             if (mainMediaPlayer.getStatus() == MediaPlayer.Status.PLAYING&&!audioOptionBar.isVisible()) {
+                playing.add(menuFT);
                 playFadingAnimation(menuFT);
+                playing.add(videoFT);
                 playFadingAnimation(videoFT);
+                playing.add(sliderFT);
                 playFadingAnimation(sliderFT);
             } else {
-                menuFT.stop();
-                videoFT.stop();
-                sliderFT.stop();
+                //Stop all current animations.
+                for (Animation a:playing){
+                    a.stop();
+                }
                 mainProgressSlider.setOpacity(1.0);
                 videoOptionBar.setOpacity(1.0);
                 mainMenuBar.setOpacity(1.0);
@@ -301,6 +305,10 @@ public class MainWindowController {
         if (speechOptionBar.isVisible()){
             return;
         }
+        //Stop all current animations.
+        for (Animation a:playing){
+            a.stop();
+        }
         //The text listener handles code to do with text input. It isn't initialised until the toolbar is visible.
         initaliseTextListener();
         speechOptionBar.setVisible(true);
@@ -319,6 +327,10 @@ public class MainWindowController {
         //If the toolbar is already visible, do nothing.
         if (audioOptionBar.isVisible()){
             return;
+        }
+        //Stop all current animations.
+        for (Animation a:playing){
+            a.stop();
         }
         audioOptionBar.setVisible(true);
         FadeTransition audioFT = new FadeTransition(Duration.millis(100), audioOptionBar);
@@ -464,7 +476,7 @@ public class MainWindowController {
                     speechSaveButton.setDisable(false);
                 }
                 //If more than 20 words have been entered, don't allow further text entry, and inform the user.
-                String[] words = newValue.split(" ");
+                String[] words = newValue.trim().split(" ");
                 if (Array.getLength(words) > 20) {
                     mainSpeechTextArea.setText(oldValue);
                     new WarningDialogue("You can't enter more than 20 words, please enter less.");
