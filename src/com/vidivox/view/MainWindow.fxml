@@ -37,7 +37,8 @@
    </children>
     <center>
         <StackPane>
-            <Label text="Welcome to Vidivox! Click File, then New Project to get started!"></Label>
+            <Label text="Welcome to Vidivox! Click File, then New Project to get started!" />
+            <Label text="If you need help, hover over a button to see what it does!" translateY="30.0" />
             <MediaView fx:id="mainMediaViewer" fitHeight="600.0" fitWidth="1280.0" preserveRatio="true" />
         </StackPane>
     </center>
