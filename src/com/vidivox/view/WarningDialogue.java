@@ -84,7 +84,7 @@ public class WarningDialogue{
      * @param exceptionMessage - The text to display.
      */
     public static void genericError(String exceptionMessage){
-        String message = "Whoops, something has gone wrong.\n";
+        String message = "Whoops, something has gone wrong.\nThis may have caused issues with your project.\n";
         message += exceptionMessage;
         new WarningDialogue(message);
     }

@@ -243,7 +243,7 @@ public class MainWindowController {
             new WarningDialogue("You must open a video from the file menu before you can add speech to it.");
             return;
         }
-        WarningDialogue inputBox = new WarningDialogue("Please enter a name for the new audio file: (A file extension will be added automatically.)","Audio",true);
+        WarningDialogue inputBox = new WarningDialogue("Please enter a valid filename for the new audio file: (A file extension will be added automatically.)","Audio",true);
         //Create new audio file from text in the textbox and export it to mp3, as a file in the project folder.
         File audioFile = new File(CurrentDirectory.getDirectory().getAbsolutePath()+System.getProperty("file.separator")+inputBox.getText()+".mp3");
         FestivalSpeech text = new FestivalSpeech(mainSpeechTextArea.getText());
@@ -641,9 +641,15 @@ public class MainWindowController {
                 }
             }
             audioList.setItems(audioFiles);
+
         }catch(FileNotFoundException e){
             //This means the manifest doesn't exist, and isn't reachable. (It would have caused an exception earlier)
             WarningDialogue.genericError("Manifest not found.");
+            return;
+        }
+        //Enable video options.
+        if (openVideoButton.isDisable()){
+            openVideoButton.setDisable(false);
         }
     }
 
@@ -655,6 +661,7 @@ public class MainWindowController {
     @FXML
     private void handleMergeAudioButton() {
         try {
+            new WarningDialogue("Beginning merge process...\nThis may take some time.");
             ManifestController manifest = new ManifestController(CurrentDirectory.getDirectory());
             ObservableList<String> selected = audioList.getSelectionModel().getSelectedItems();
             File videoFile = new File(CurrentDirectory.getDirectory().getName() + System.getProperty("file.separator") + manifest.getVideo());
