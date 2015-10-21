@@ -1,17 +1,12 @@
 package com.vidivox;
 
-import com.vidivox.controller.CurrentDirectory;
-import com.vidivox.view.WarningDialogue;
 import javafx.application.Application;
-import javafx.application.Platform;
-import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
-import java.awt.event.WindowEvent;
 
 /**
  * @author Jayden Cooke

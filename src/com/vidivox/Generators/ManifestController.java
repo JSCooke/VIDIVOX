@@ -6,8 +6,6 @@ import javafx.collections.ObservableList;
 
 import java.io.*;
 import java.nio.file.Files;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Scanner;
 
 /**

@@ -1,6 +1,5 @@
 package com.vidivox.view;
 
-import com.vidivox.controller.CurrentDirectory;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -12,7 +11,6 @@ import javafx.scene.control.TextArea;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.stage.WindowEvent;
 
 /**
  * @author Matthew Canham, Jayden Cooke
