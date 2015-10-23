@@ -694,15 +694,30 @@ public class MainWindowController {
     @FXML
     private void handleMergeAudioButton() {
         try {
+            final FileChooser fileChooser = new FileChooser();
+            //Makes only mp4 files visible, as is the standard.
+            FileChooser.ExtensionFilter mp4Filter = new FileChooser.ExtensionFilter("MP4 video (.mp4)", "*.mp4");
+            fileChooser.getExtensionFilters().add(mp4Filter);
+            //Makes all files visible, as an option.
+            FileChooser.ExtensionFilter allFilter = new FileChooser.ExtensionFilter("All files", "*");
+            fileChooser.getExtensionFilters().add(allFilter);
+            //This alters the heading in the FileChooser.
+            fileChooser.setTitle("Select new video location");
+            //A default filename is set for the user.
+            fileChooser.setInitialFileName("NewVideo.mp3");
+            File newVideoFile = fileChooser.showSaveDialog(new Stage());
             new WarningDialogue("Beginning merge process...\nThis may take some time, and your video may change in length.");
             ManifestController manifest = new ManifestController(CurrentDirectory.getDirectory());
             ObservableList<String> selected = audioList.getSelectionModel().getSelectedItems();
             File videoFile = new File(CurrentDirectory.getDirectory().getName() + System.getProperty("file.separator") + manifest.getVideo());
             VideoController videoController = new VideoController(videoFile);
+            File tempAudio;
             for (String s : selected) {
-                System.out.println(videoController.padAudio(10,new File(CurrentDirectory.getDirectory().getName() + System.getProperty("file.separator") + s)));
-                //videoController.mergeAudio(new File(CurrentDirectory.getDirectory().getName() + System.getProperty("file.separator") + s),videoFile);
+                tempAudio = new File(CurrentDirectory.getDirectory().getName() + System.getProperty("file.separator") + s);
+                videoController.padAudio(Integer.parseInt(mergePointArea.getText()), tempAudio);
+                videoController.mergeAudio(new File(CurrentDirectory.getDirectory().getName() + System.getProperty("file.separator") + s), videoFile).renameTo(newVideoFile);
             }
+            new WarningDialogue("Merging successful. Your file is now at the location you specified.");
         }catch (FileNotFoundException e) {
             //The way the GUI is designed, this is unreachable.
             WarningDialogue.genericError("No video file was found.");

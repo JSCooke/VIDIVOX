@@ -28,28 +28,19 @@ public class VideoController {
      * Merges the audio file specified to the current video.
      *
      * @param audioFile    - the audio file to merge.
-     * @param newVideoFile - the location of the new video.
+     * @param oldVideoFile - the current video.
      */
-    public void mergeAudio(File audioFile, File newVideoFile) {
+    public File mergeAudio(File audioFile, File oldVideoFile) {
         try {
-            //Changes the path file separators.
-            String audioFilePath = audioFile.toURI().toURL().getPath();
-            audioFilePath = audioFilePath.replace("%20", "\\ ");
-            String newVideoFilePath = newVideoFile.toURI().toURL().getPath();
-            newVideoFilePath = newVideoFilePath.replace("%20", "\\ ");
-            String videoFilePath = videoFile.toURI().toURL().getPath();
-            videoFilePath = videoFilePath.replace("%20", "\\ ");
-            //Makes any required directories. This was created before the project structure was implemented, and wouldn't be used in the current build.
-            newVideoFile.getParentFile().mkdirs();
-            //Calls ffmpeg for the actual merging.
-            String process = "ffmpeg -i " + videoFilePath + " -i " + audioFilePath
-                    + " -strict experimental -acodec aac -b:a 32k -vcodec copy -filter_complex \"[1:0]apad\" -shortest -y " + newVideoFilePath;
+            File newVideoFile = new File(CurrentDirectory.getDirectory().getAbsolutePath()+System.getProperty("file.separator")+"output.mp4");
+            //Calls ffmpeg for the actual merging, and creates the new video file.
+            String process = "ffmpeg -i "+audioFile.getName()+" -i "+oldVideoFile.getName()+" -filter_complex \"[0:a][1:a]amerge,pan=stereo:c0<c0+c2:c1<c1+c3[out]\" -map 1:v -map \"[out]\" -c:v copy -c:a libfdk_aac output.mp4\n";
             ProcessBuilder pb = new ProcessBuilder("/bin/sh", "-c", process);
             pb.start().waitFor();
-        } catch (IOException e) {
+            return newVideoFile;
+        } catch (IOException | InterruptedException e) {
             WarningDialogue.genericError(e.getMessage());
-        } catch (InterruptedException e) {
-            WarningDialogue.genericError(e.getMessage());
+            return oldVideoFile;
         }
     }
 
@@ -62,6 +53,7 @@ public class VideoController {
         try {
             //Creates an object representing the file the ffmpeg calls will make.
             File padded = new File(CurrentDirectory.getDirectory().getAbsolutePath() + System.getProperty("file.separator") + "pad" + timeToAdd + audioFile.getName());
+            //FFMPEG calls from http://superuser.com/questions/579008/add-1-second-of-silence-to-audio-through-ffmpeg
             String process1 = "ffmpeg -f lavfi -i aevalsrc=0:0:0:0:0:0::duration=1 silence.mp3";
             String process2 = "ffmpeg -i concat:\"silence.mp3|" + audioFile.getName() + "\" -codec copy " + padded.getName();
             ProcessBuilder pb = new ProcessBuilder("/bin/sh", "-c", process1);
