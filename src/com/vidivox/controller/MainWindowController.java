@@ -694,13 +694,14 @@ public class MainWindowController {
     @FXML
     private void handleMergeAudioButton() {
         try {
-            new WarningDialogue("Beginning merge process...\nThis may take some time.");
+            new WarningDialogue("Beginning merge process...\nThis may take some time, and your video may change in length.");
             ManifestController manifest = new ManifestController(CurrentDirectory.getDirectory());
             ObservableList<String> selected = audioList.getSelectionModel().getSelectedItems();
             File videoFile = new File(CurrentDirectory.getDirectory().getName() + System.getProperty("file.separator") + manifest.getVideo());
             VideoController videoController = new VideoController(videoFile);
             for (String s : selected) {
-                videoController.mergeAudio(new File(CurrentDirectory.getDirectory().getName() + System.getProperty("file.separator") + s),videoFile);
+                System.out.println(videoController.padAudio(10,new File(CurrentDirectory.getDirectory().getName() + System.getProperty("file.separator") + s)));
+                //videoController.mergeAudio(new File(CurrentDirectory.getDirectory().getName() + System.getProperty("file.separator") + s),videoFile);
             }
         }catch (FileNotFoundException e) {
             //The way the GUI is designed, this is unreachable.
