@@ -5,6 +5,7 @@
 <?import javafx.scene.media.*?>
 <?import javafx.scene.layout.*?>
 
+<?import com.sun.javafx.scene.control.skin.ProgressIndicatorSkin.IndeterminateSpinner?>
 <BorderPane fx:id="mainWindow" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onMouseMoved="#handleMouseMoved" prefHeight="800.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.vidivox.controller.MainWindowController">
    <children>
       <MediaView fitHeight="400.0" fitWidth="600.0" BorderPane.alignment="CENTER" />
@@ -68,31 +69,34 @@
         </ToolBar>
     </right>
     <left>
-        <ToolBar fx:id="audioOptionBar" orientation="VERTICAL" prefHeight="120.0" prefWidth="125.0" visible="false">
-        <ListView fx:id="audioList" prefHeight="200.0" prefWidth="125.0">
-
-        </ListView>
-            <Button mnemonicParsing="false" prefHeight="25.0" prefWidth="125.0" text="Add..." onAction="#handleAddAudioButton">
+        <ToolBar fx:id="audioOptionBar" orientation="VERTICAL" prefHeight="120.0" prefWidth="150.0" visible="false">
+        <ListView fx:id="audioList" prefHeight="200.0" prefWidth="150.0"/>
+        <HBox prefHeight="25.0" prefWidth="150.0">
+            <Label mnemonicParsing="false" text="Merge at:" prefHeight="25.0"/>
+            <TextField fx:id="mergePointArea" text="0" prefWidth="35.0" prefHeight="25.0"/>
+            <Label mnemonicParsing="false" text="seconds" prefHeight="25.0"/>
+        </HBox>
+            <Button mnemonicParsing="false" prefHeight="25.0" prefWidth="150.0" text="Add..." onAction="#handleAddAudioButton">
                 <tooltip>
                     <Tooltip text="Add an audio file to the list"/>
                 </tooltip>
             </Button>
-            <Button mnemonicParsing="false" prefHeight="25.0" prefWidth="125.0" text="Remove" onAction="#handleRemoveAudioButton">
+            <Button mnemonicParsing="false" prefHeight="25.0" prefWidth="150.0" text="Remove" onAction="#handleRemoveAudioButton">
                 <tooltip>
                     <Tooltip text="Remove the selected file from the list"/>
                 </tooltip>
             </Button>
-            <Button mnemonicParsing="false" prefHeight="25.0" prefWidth="125.0" text="Create New" onAction="#handleAddSpeechButton">
+            <Button mnemonicParsing="false" prefHeight="25.0" prefWidth="150.0" text="Create New" onAction="#handleAddSpeechButton">
                 <tooltip>
                     <Tooltip text="View the speech toolbar to create your own audio"/>
                 </tooltip>
             </Button>
-            <Button mnemonicParsing="false" prefHeight="25.0" prefWidth="125.0" text="Merge Selected" onAction="#handleMergeAudioButton">
+            <Button mnemonicParsing="false" prefHeight="25.0" prefWidth="150.0" text="Merge Selected" onAction="#handleMergeAudioButton">
                 <tooltip>
                     <Tooltip text="Merge the selected item into the video."/>
                 </tooltip>
             </Button>
-            <Button mnemonicParsing="false" prefHeight="25.0" prefWidth="125.0" text="Close" onAction="#handleCloseAudioButton">
+            <Button mnemonicParsing="false" prefHeight="25.0" prefWidth="150.0" text="Close" onAction="#handleCloseAudioButton">
                 <tooltip>
                     <Tooltip text="Close this toolbar"/>
                 </tooltip>

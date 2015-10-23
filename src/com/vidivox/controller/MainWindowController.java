@@ -92,7 +92,11 @@ public class MainWindowController {
     @FXML
     private MenuItem openVideoButton;
 
+    @FXML
+    private TextField mergePointArea;
+
     private List<Animation> playing = new ArrayList<Animation>();
+
     /**
      * Handles the code around opening a video.
      * Actually opening the video is delegated to the helper method, openNewVideo
@@ -310,7 +314,7 @@ public class MainWindowController {
             a.stop();
         }
         //The text listener handles code to do with text input. It isn't initialised until the toolbar is visible.
-        initaliseTextListener();
+        initaliseTextToSpeechListener();
         speechOptionBar.setVisible(true);
         FadeTransition speechFT = new FadeTransition(Duration.millis(100), speechOptionBar);
         //Can't use the normal method here, its a fade in, not a fade out.
@@ -333,6 +337,7 @@ public class MainWindowController {
             a.stop();
         }
         audioOptionBar.setVisible(true);
+        initialiseMergePointListener();
         FadeTransition audioFT = new FadeTransition(Duration.millis(100), audioOptionBar);
         //Can't use the normal method here, its a fade in, not a fade out.
         audioFT.setFromValue(0.0);
@@ -463,7 +468,7 @@ public class MainWindowController {
      * This handles minor GUI functions, like disabling previews of empty strings and enforcing a word limit.
      * This is called whenever the TextArea becomes visible, but is too long for that method.
      */
-    private void initaliseTextListener() {
+    private void initaliseTextToSpeechListener() {
         mainSpeechTextArea.textProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> observableValue, String oldValue, String newValue) {
@@ -485,6 +490,22 @@ public class MainWindowController {
         });
     }
 
+    /**
+     * This creates the listener for the validation of the starting point text field.
+     */
+    private void initialiseMergePointListener() {
+        mergePointArea.textProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed (ObservableValue < ?extends String > observableValue, String oldValue, String newValue){
+                //If the string is an integer, its allowed. Otherwise, prevent text entry.
+                //.matches code from http://stackoverflow.com/questions/5439529/determine-if-a-string-is-an-integer-in-java
+                if (!newValue.matches("\\d+")){
+                    mergePointArea.setText(oldValue);
+                    new WarningDialogue("Please only enter a whole number of seconds.");
+                }
+            }
+        });
+    }
     /**
      * Closes the window when the close menu object is pressed.
      */
