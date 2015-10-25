@@ -56,38 +56,47 @@ public class VideoController {
             //Creates an object representing the file the ffmpeg calls will make.
             File padded = new File(CurrentDirectory.getDirectory().getAbsolutePath() + System.getProperty("file.separator") + "pad" + timeToAdd + audioFile.getName());
             //FFMPEG call from http://superuser.com/questions/579008/add-1-second-of-silence-to-audio-through-ffmpeg
-            String process1 = "ffmpeg -f lavfi -i aevalsrc=0:0:0:0:0:0::duration="+timeToAdd+" silence.mp3";
+            String commands1 = "ffmpeg -f lavfi -i aevalsrc=0:0:0:0:0:0::duration="+timeToAdd+" silence.mp3 > /dev/null 2>&1 < /dev/null";
             //Concept from http://stackoverflow.com/questions/7333232/concatenate-two-mp4-files-using-ffmpeg
-            String process2 = "touch list.txt";
-            String process3 = "echo \"file '"+CurrentDirectory.getDirectory().getAbsolutePath()+ System.getProperty("file.separator")+"silence.mp3'\" >> list.txt";
-            String process4 = "echo \"file '"+audioFile.getAbsolutePath()+"'\" >> list.txt";
-            String process5 = "ffmpeg -f concat -i list.txt -c copy "+padded.getName();
-            ProcessBuilder pb1 = new ProcessBuilder("/bin/sh", "-c", process1);
+            String commands2 = "touch list.txt";
+            String commands3 = "echo \"file '"+CurrentDirectory.getDirectory().getAbsolutePath()+ System.getProperty("file.separator")+"silence.mp3'\" >> list.txt";
+            String commands4 = "echo \"file '"+audioFile.getAbsolutePath()+"'\" >> list.txt";
+            String commands5 = "ffmpeg -f concat -i list.txt -c copy "+padded.getName() +" > /dev/null 2>&1 < /dev/null";
+
+            ProcessBuilder pb1 = new ProcessBuilder("/bin/sh", "-c", commands1);
             pb1.directory(CurrentDirectory.getDirectory());
-            pb1.start();
-            ProcessBuilder pb2 = new ProcessBuilder("/bin/sh", "-c", process2);
+            Process process1 = pb1.start();
+            process1.waitFor();
+
+            ProcessBuilder pb2 = new ProcessBuilder("/bin/sh", "-c", commands2);
             pb2.directory(CurrentDirectory.getDirectory());
-            pb2.start();
-            ProcessBuilder pb3 = new ProcessBuilder("/bin/sh", "-c", process3);
+            Process process2 = pb2.start();
+            process2.waitFor();
+
+            ProcessBuilder pb3 = new ProcessBuilder("/bin/sh", "-c", commands3);
             pb3.directory(CurrentDirectory.getDirectory());
-            pb3.start();
-            ProcessBuilder pb4 = new ProcessBuilder("/bin/sh", "-c", process4);
+            Process process3 = pb3.start();
+            process3.waitFor();
+
+            ProcessBuilder pb4 = new ProcessBuilder("/bin/sh", "-c", commands4);
             pb4.directory(CurrentDirectory.getDirectory());
-            pb4.start();
-            ProcessBuilder pb5 = new ProcessBuilder("/bin/sh", "-c", process5);
+            Process process4 = pb4.start();
+            process4.waitFor();
+
+            ProcessBuilder pb5 = new ProcessBuilder("/bin/sh", "-c", commands5);
             pb5.directory(CurrentDirectory.getDirectory());
-            pb5.start();
+            Process process5 = pb5.start();
+            process5.waitFor();
+
             //Delete temporary files made during the combining process.
-            /*
-            File listFile = new File(CurrentDirectory.getDirectory()+System.getProperty("file.separator")+"list.txt");
-            listFile.delete();
-            */
             File silence = new File(CurrentDirectory.getDirectory()+System.getProperty("file.separator")+"silence.mp3");
             Files.delete(silence.toPath());
             File list = new File(CurrentDirectory.getDirectory()+System.getProperty("file.separator")+"list.txt");
             Files.delete(list.toPath());
+
             return padded;
-        } catch (Exception e) {
+            
+        } catch (IOException | InterruptedException e) {
             //Occurs when invalid files are passed in. There is no way for the user to actually do this through the GUI.
             WarningDialogue.genericError(e.getMessage());
             //Returning the original file unaltered will cause erroneous output, but won't terminate the program.

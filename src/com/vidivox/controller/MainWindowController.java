@@ -708,7 +708,7 @@ public class MainWindowController {
                     //This alters the heading in the FileChooser.
                     fileChooser.setTitle("Select new video location");
                     //A default filename is set for the user.
-                    fileChooser.setInitialFileName("NewVideo.mp3");
+                    fileChooser.setInitialFileName("NewVideo.mp4");
                     File newVideoFile = fileChooser.showSaveDialog(new Stage());
                     new WarningDialogue("Beginning merge process...\nThis may take some time, and your video may change in length.");
                     ManifestController manifest = new ManifestController(CurrentDirectory.getDirectory());
