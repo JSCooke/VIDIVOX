@@ -5,6 +5,7 @@ import com.vidivox.view.WarningDialogue;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 
 /**
  * @author Matthew Canham
@@ -76,8 +77,16 @@ public class VideoController {
             ProcessBuilder pb5 = new ProcessBuilder("/bin/sh", "-c", process5);
             pb5.directory(CurrentDirectory.getDirectory());
             pb5.start();
+            //Delete temporary files made during the combining process.
+            /*
+            File listFile = new File(CurrentDirectory.getDirectory()+System.getProperty("file.separator")+"list.txt");
+            listFile.delete();
+            */
+            File silence = new File(CurrentDirectory.getDirectory()+System.getProperty("file.separator")+"silence.mp3");
+            Files.delete(silence.toPath());
+            File list = new File(CurrentDirectory.getDirectory()+System.getProperty("file.separator")+"list.txt");
+            Files.delete(list.toPath());
             return padded;
-            //Clean up files
         } catch (Exception e) {
             //Occurs when invalid files are passed in. There is no way for the user to actually do this through the GUI.
             WarningDialogue.genericError(e.getMessage());
