@@ -643,19 +643,25 @@ public class MainWindowController {
         File loadDirectory = dirChooser.showDialog(new Stage());
         //Check if any of the files is a manifest.
         boolean hasManifest = false;
-        for (File f:loadDirectory.listFiles()){
-            if(f.getName().endsWith(".vvx")){
-                hasManifest = true;
-                break;
+        try {
+            for (File f : loadDirectory.listFiles()) {
+                if (f.getName().endsWith(".vvx")) {
+                    hasManifest = true;
+                    break;
+                }
             }
-        }
-        //If all files are checked and no manifest is found, return.
-        if (!hasManifest){
-            new WarningDialogue("Sorry, that is not a valid project.\nOnly folders with manifests (.vvx) are valid.");
+            //If all files are checked and no manifest is found, return.
+            if (!hasManifest) {
+                new WarningDialogue("Sorry, that is not a valid project.\nOnly folders with manifests (.vvx) are valid.");
+                return;
+            }
+            //Update the CurrentDirectory class.
+            CurrentDirectory.setDirectory(loadDirectory);
+        }catch (NullPointerException e){
+            //Thrown when the user doesn't select a file.
+            new WarningDialogue("Operation aborted, no file was chosen.");
             return;
         }
-        //Update the CurrentDirectory class.
-        CurrentDirectory.setDirectory(loadDirectory);
         ManifestController manifest = new ManifestController(CurrentDirectory.getDirectory());
         try {
             File video = new File(CurrentDirectory.getDirectory() + System.getProperty("file.separator") + manifest.getVideo());
