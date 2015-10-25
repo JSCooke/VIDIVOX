@@ -716,10 +716,13 @@ public class MainWindowController {
                     File videoFile = new File(CurrentDirectory.getDirectory().getName() + System.getProperty("file.separator") + manifest.getVideo());
                     VideoController videoController = new VideoController(videoFile);
                     File tempAudio;
+                    File paddedAudio;
+                    File mergedVideo;
                     for (String s : selected) {
                         tempAudio = new File(CurrentDirectory.getDirectory().getName() + System.getProperty("file.separator") + s);
-                        videoController.padAudio(Integer.parseInt(mergePointArea.getText()), tempAudio);
-                        //videoController.mergeAudio(new File(CurrentDirectory.getDirectory().getName() + System.getProperty("file.separator") + s), videoFile).renameTo(newVideoFile);
+                        paddedAudio = videoController.padAudio(Integer.parseInt(mergePointArea.getText()), tempAudio, (int)mainMediaPlayer.getTotalDuration().toSeconds());
+                        mergedVideo = videoController.mergeAudio(paddedAudio, videoFile);
+                        mergedVideo.renameTo(newVideoFile);
                     }
                     new WarningDialogue("Merging successful. Your file is now at the location you specified.");
                 }catch (FileNotFoundException e) {
