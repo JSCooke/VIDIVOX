@@ -20,6 +20,7 @@ import javafx.stage.Stage;
 public class WarningDialogue{
 
     private String textInput;
+    private final Stage warningStage;
 
     /**
      * Handles normal errors.
@@ -38,10 +39,16 @@ public class WarningDialogue{
      */
     public WarningDialogue(String warningText, String titleText, Boolean hasTextField) {
         //Initialise the window
-        final Stage warningStage = new Stage();
+        warningStage = new Stage();
         warningStage.initModality(Modality.APPLICATION_MODAL);
         warningStage.setTitle(titleText);
         warningStage.setMinWidth(250);
+        Scene scene = setUpLayout(warningText,titleText,hasTextField);
+        warningStage.setScene(scene);
+        warningStage.showAndWait();
+    }
+
+    private Scene setUpLayout(String warningText, String titleText, Boolean hasTextField){
         Label warningLabel = new Label(warningText);
         VBox layout = new VBox(10);
         layout.getChildren().add(warningLabel);
@@ -73,8 +80,7 @@ public class WarningDialogue{
         layout.setAlignment(Pos.CENTER);
         layout.setPadding(new Insets(20,20,20,20));
         Scene scene = new Scene(layout);
-        warningStage.setScene(scene);
-        warningStage.showAndWait();
+        return scene;
     }
 
     /**
