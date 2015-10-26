@@ -301,6 +301,8 @@ public class MainWindowController {
             //Updates the manifest to reflect the new file.
             ManifestController manifest = new ManifestController(CurrentDirectory.getDirectory());
             manifest.addAudio(audioFile.getName());
+            removeAudioButton.setDisable(false);
+            mergeSelectedButton.setDisable(false);
         }catch(FileNotFoundException e){
             //This shouldn't be reachable, as we create the file it refers to in the above statements.
             Dialogue.genericError("Audio file was not generated correctly.");
