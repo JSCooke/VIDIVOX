@@ -598,6 +598,7 @@ public class MainWindowController {
             //Create the directory.
             CurrentDirectory.makeDir();
 
+            new WarningDialogue("Great! Your project has been created. Add a video to get started!", "Success");
             //Enable video options.
             if (openVideoButton.isDisable()){
                 openVideoButton.setDisable(false);
