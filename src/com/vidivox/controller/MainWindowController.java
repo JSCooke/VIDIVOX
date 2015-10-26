@@ -18,6 +18,8 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaException;
@@ -110,6 +112,11 @@ public class MainWindowController {
     @FXML
     private Button mergeSelectedButton;
 
+    @FXML
+    private Image playIcon;
+
+    @FXML
+    private Image pauseIcon;
     /**
      * Handles the code around opening a video.
      * Actually opening the video is delegated to the helper method, openNewVideo
@@ -197,9 +204,11 @@ public class MainWindowController {
         try {
             if(mainMediaPlayer.getStatus() == MediaPlayer.Status.PLAYING){
                 mainMediaPlayer.pause();
+                playPauseButton.setGraphic(new ImageView(playIcon));
                 playPauseButton.setTooltip(new Tooltip(("Play the video.")));
             } else {
                 mainMediaPlayer.play();
+                playPauseButton.setGraphic(new ImageView(pauseIcon));
                 playPauseButton.setTooltip(new Tooltip(("Pause the video.")));
             }
         } catch (NullPointerException e){
