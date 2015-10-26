@@ -15,27 +15,26 @@ public abstract class Dialogue {
      * @param warningText - The text to present to the user.
      */
     public Dialogue(String warningText) {
-        this(warningText, "Warning!", false);
+        this(warningText, "Warning!");
     }
 
     /**
      * Dialog box with a customisable layout. Subclasses implement the setUpLayout method to change the look.
      * @param warningText - The words to present to the user
      * @param titleText - The title of the dialog box
-     * @param hasTextField - Whether or not to include the text input field.
      */
-    public Dialogue(String warningText, String titleText, Boolean hasTextField) {
+    public Dialogue(String warningText, String titleText) {
         //Initialise the window
         warningStage = new Stage();
         warningStage.initModality(Modality.APPLICATION_MODAL);
         warningStage.setTitle(titleText);
         warningStage.setMinWidth(250);
-        Scene scene = setUpLayout(warningText,hasTextField);
+        Scene scene = setUpLayout(warningText);
         warningStage.setScene(scene);
         warningStage.showAndWait();
     }
 
-    protected abstract Scene setUpLayout(String warningText, boolean hasTextField);
+    protected abstract Scene setUpLayout(String warningText);
 
     /**
      * Can be called from anywhere an error has occurred.

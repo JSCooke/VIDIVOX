@@ -7,31 +7,17 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 
-
 /**
- * @author Matthew Canham, Jayden Cooke
- * A class to generate dialog boxes, which are lacking in JavaFX.
- * Mainly used to notify the user of errors.
+ * Created by Jayden on 26/10/2015.
  */
-public class WarningDialogue extends Dialogue{
+public class InputDialogue extends Dialogue {
 
-    /**
-     * Handles normal errors.
-     * @param warningText - The text to present to the user.
-     */
-    public WarningDialogue(String warningText) {
-        this(warningText, "Warning!");
-    }
+    private String textInput;
 
-    /**
-     * Warning dialogue box with a customisable title and text input field.
-     * @param warningText - The words to present to the user
-     * @param titleText - The title of the dialog box
-     */
-    public WarningDialogue(String warningText, String titleText) {
+    public InputDialogue(String warningText, String titleText){
         super(warningText,titleText);
     }
 
@@ -40,10 +26,14 @@ public class WarningDialogue extends Dialogue{
         VBox layout = new VBox(10);
         layout.getChildren().add(warningLabel);
         Button closeButton = new Button("OK");
-        //Close action is slightly different when there is no text to add.
+        final TextField inputField = new TextField();
+        inputField.setPrefWidth(240);
+        layout.getChildren().add(inputField);
         closeButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
+                //An affirmative close needs to save the input text into the inputText field.
+                textInput=inputField.getText();
                 warningStage.close();
             }
         });
@@ -53,4 +43,6 @@ public class WarningDialogue extends Dialogue{
         Scene scene = new Scene(layout);
         return scene;
     }
+
+    public String getText(){ return textInput; }
 }

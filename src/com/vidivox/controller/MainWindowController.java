@@ -4,6 +4,7 @@ import com.vidivox.Generators.FestivalSpeech;
 import com.vidivox.Generators.ManifestController;
 import com.vidivox.Generators.VideoController;
 import com.vidivox.view.Dialogue;
+import com.vidivox.view.InputDialogue;
 import com.vidivox.view.WarningDialogue;
 import com.vidivox.view.YesNoDialogue;
 import javafx.animation.Animation;
@@ -99,6 +100,9 @@ public class MainWindowController {
     private TextField mergePointArea;
 
     private List<Animation> playing = new ArrayList<Animation>();
+
+    @FXML
+    private Button speechToProjectButton;
 
     /**
      * Handles the code around opening a video.
@@ -235,9 +239,13 @@ public class MainWindowController {
         fileChooser.setTitle("Save speech to mp3 file");
         //A default filename is set for the user.
         fileChooser.setInitialFileName("Dialogue.mp3");
-        File file = fileChooser.showSaveDialog(new Stage());
-        FestivalSpeech textToSpeak = new FestivalSpeech(mainSpeechTextArea.getText());
-        textToSpeak.exportToMP3(file);
+        try {
+            File file = fileChooser.showSaveDialog(new Stage());
+            FestivalSpeech textToSpeak = new FestivalSpeech(mainSpeechTextArea.getText());
+            textToSpeak.exportToMP3(file);
+        }catch (NullPointerException e){
+            new WarningDialogue("Operation cancelled, you need to choose a location to save.","Warning!");
+        }
     }
 
     /**
@@ -250,7 +258,7 @@ public class MainWindowController {
             new WarningDialogue("You must open a video from the file menu before you can add speech to it.");
             return;
         }
-        WarningDialogue inputBox = new WarningDialogue("Please enter a valid filename for the new audio file: (A file extension will be added automatically.)","Audio",true);
+        InputDialogue inputBox = new InputDialogue("Please enter a valid filename for the new audio file: (A file extension will be added automatically.)","Audio");
         //Create new audio file from text in the textbox and export it to mp3, as a file in the project folder.
         File audioFile = new File(CurrentDirectory.getDirectory().getAbsolutePath()+System.getProperty("file.separator")+inputBox.getText()+".mp3");
         FestivalSpeech text = new FestivalSpeech(mainSpeechTextArea.getText());
@@ -479,9 +487,11 @@ public class MainWindowController {
                 if (newValue.isEmpty()) {
                     speechPreviewButton.setDisable(true);
                     speechSaveButton.setDisable(true);
+                    speechToProjectButton.setDisable(true);
                 } else {
                     speechPreviewButton.setDisable(false);
                     speechSaveButton.setDisable(false);
+                    speechToProjectButton.setDisable(false);
                 }
                 //If more than 20 words have been entered, don't allow further text entry, and inform the user.
                 String[] words = newValue.trim().split(" ");
@@ -533,7 +543,7 @@ public class MainWindowController {
             //Add the path of the current directory.
             CurrentDirectory.addPath(destDirectory.getAbsolutePath().toString());
             //Ask for user input.
-            WarningDialogue inputBox = new WarningDialogue("Please enter a name for the project:", "Project", true);
+            InputDialogue inputBox = new InputDialogue("Please enter a name for the project:", "Project");
             CurrentDirectory.addName(inputBox.getText());
             //Create the directory.
             CurrentDirectory.makeDir();

@@ -19,10 +19,10 @@ public class YesNoDialogue extends Dialogue{
     private boolean outcome;
 
     public YesNoDialogue(String message, String title){
-        super(message, title, false);
+        super(message, title);
     }
 
-    protected Scene setUpLayout(String warningText, boolean hasTextField){
+    protected Scene setUpLayout(String warningText){
         Label warningLabel = new Label(warningText);
         VBox layout = new VBox(10);
         HBox buttons = new HBox();

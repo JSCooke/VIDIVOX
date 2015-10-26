@@ -55,7 +55,7 @@
                         <Tooltip text="Save the speech to a destination of your choice"/>
                     </tooltip>
                 </Button>
-                <Button layoutX="18.0" layoutY="70.0" mnemonicParsing="false" onAction="#handleAddToVideoButton" prefHeight="25.0" prefWidth="125.0" text="Add to Project" >
+                <Button fx:id="speechToProjectButton" layoutX="18.0" layoutY="70.0" mnemonicParsing="false" onAction="#handleAddToVideoButton" prefHeight="25.0" prefWidth="125.0" text="Add to Project" disable="true">
                     <tooltip>
                         <Tooltip text="Add the speech to the project"/>
                     </tooltip>
