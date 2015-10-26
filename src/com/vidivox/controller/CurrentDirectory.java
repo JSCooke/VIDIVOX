@@ -26,7 +26,7 @@ public class CurrentDirectory {
     /**
      * Sets the current project directory.
      * This could replace the addPath and addName methods, but old code still uses them.
-     * @param directory
+     * @param directory - The current project directory.
      */
     public static void setDirectory (File directory) {
         if (currentDirectory == null) {

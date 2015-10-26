@@ -5,163 +5,174 @@
 <?import javafx.scene.media.*?>
 <?import javafx.scene.layout.*?>
 
-<?import com.sun.javafx.scene.control.skin.ProgressIndicatorSkin.IndeterminateSpinner?>
-<BorderPane fx:id="mainWindow" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onMouseMoved="#handleMouseMoved" prefHeight="800.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.vidivox.controller.MainWindowController">
-   <children>
-      <MediaView fitHeight="400.0" fitWidth="600.0" BorderPane.alignment="CENTER" />
-      <MenuBar layoutY="187.0" translateY="-189.0">
-        <menus>
-          <Menu mnemonicParsing="false" text="File">
-            <items>
-              <MenuItem mnemonicParsing="false" text="Close" />
-            </items>
-          </Menu>
-        </menus>
-      </MenuBar>
-      <ToolBar layoutY="187.0" prefHeight="40.0" prefWidth="200.0" translateY="180.0" BorderPane.alignment="CENTER_RIGHT">
-        <items>
-          <Button mnemonicParsing="false" text="Manage Audio" />
-            <Button mnemonicParsing="false" text="Play/Pause" />
-            <Slider />
-        </items>
-      </ToolBar>
-      <ToolBar layoutY="100.0" prefHeight="98.0" prefWidth="600.0" translateY="-40.0" BorderPane.alignment="BOTTOM_CENTER">
-        <items>
-            <TextArea prefHeight="88.0" prefWidth="374.0" />
-            <Button mnemonicParsing="false" text="Save and Add..." translateY="30.0" />
-          <Button alignment="CENTER_RIGHT" mnemonicParsing="false" text="Add..." translateX="-100.0" />
-            <Button layoutX="60.0" layoutY="42.0" mnemonicParsing="false" text="Preview" translateX="-150.0" translateY="-30.0" />
-        </items>
-      </ToolBar>
-   </children>
+<BorderPane fx:id="mainWindow" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
+            onMouseMoved="#handleMouseMoved" prefHeight="800.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/8"
+            xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.vidivox.controller.MainWindowController">
     <center>
         <StackPane>
             <ImageView visible="false">
                 <Image fx:id="playIcon" url="@PlayIcon.png" requestedHeight="25.0" requestedWidth="25.0"/>
                 <Image fx:id="pauseIcon" url="@PauseIcon.png" requestedHeight="25.0" requestedWidth="25.0"/>
             </ImageView>
-            <Label text="Welcome to Vidivox! Click File, then New Project to get started!" />
-            <Label text="If you need help, hover over a button to see what it does!" translateY="30.0" />
-            <MediaView fx:id="mainMediaViewer" fitHeight="600.0" fitWidth="1280.0" preserveRatio="true" />
+            <Label text="Welcome to Vidivox! Click File, then New Project to get started!"/>
+            <Label text="If you need help, hover over a button to see what it does!" translateY="30.0"/>
+            <MediaView fx:id="mainMediaViewer" fitHeight="600.0" fitWidth="1280.0" preserveRatio="true"/>
         </StackPane>
     </center>
     <right>
         <ToolBar fx:id="speechOptionBar" orientation="VERTICAL" prefHeight="120.0" prefWidth="125.0" visible="false">
-            <items>
-                <TextArea fx:id="mainSpeechTextArea" prefHeight="200.0" prefWidth="125.0" promptText="Enter up to 20 words to add to the video..." wrapText="true" />
-                <Button fx:id="speechPreviewButton" layoutX="18.0" layoutY="9.0" mnemonicParsing="false" onAction="#handleSpeechPreviewButton" prefHeight="25.0" prefWidth="125.0" text="Preview" disable="true">
-                    <tooltip>
+            <TextArea fx:id="mainSpeechTextArea" prefHeight="200.0" prefWidth="125.0"
+                      promptText="Enter up to 20 words to add to the video..." wrapText="true"/>
+            <Button fx:id="speechPreviewButton" layoutX="18.0" layoutY="9.0" mnemonicParsing="false"
+                    onAction="#handleSpeechPreviewButton" prefHeight="25.0" prefWidth="125.0" text="Preview"
+                    disable="true">
+                <tooltip>
                     <Tooltip text="Preview the speech"/>
                 </tooltip>
-                </Button>
-                <Button fx:id="speechSaveButton" layoutX="18.0" layoutY="39.0" mnemonicParsing="false" onAction="#handleSaveAudioButton" prefHeight="25.0" prefWidth="125.0" text="Save Audio to File..." disable="true">
-                    <tooltip>
-                        <Tooltip text="Save the speech to a destination of your choice"/>
-                    </tooltip>
-                </Button>
-                <Button fx:id="speechToProjectButton" layoutX="18.0" layoutY="70.0" mnemonicParsing="false" onAction="#handleAddToVideoButton" prefHeight="25.0" prefWidth="125.0" text="Add to Project" disable="true">
-                    <tooltip>
-                        <Tooltip text="Add the speech to the project"/>
-                    </tooltip>
-                </Button>
-                <Button layoutX="18.0" layoutY="105.0" mnemonicParsing="false" onAction="#handleCloseSpeechButton" prefHeight="25.0" prefWidth="125.0" text="Close" >
-                    <tooltip>
-                        <Tooltip text="Close this toolbar"/>
-                    </tooltip>
-                </Button>
-            </items>
+            </Button>
+            <Button fx:id="speechSaveButton" layoutX="18.0" layoutY="39.0" mnemonicParsing="false"
+                    onAction="#handleSaveAudioButton" prefHeight="25.0" prefWidth="125.0"
+                    text="Save Audio to File..." disable="true">
+                <tooltip>
+                    <Tooltip text="Save the speech to a destination of your choice"/>
+                </tooltip>
+            </Button>
+            <Button fx:id="speechToProjectButton" layoutX="18.0" layoutY="70.0" mnemonicParsing="false"
+                    onAction="#handleAddToVideoButton" prefHeight="25.0" prefWidth="125.0" text="Add to Project"
+                    disable="true">
+                <tooltip>
+                    <Tooltip text="Add the speech to the project"/>
+                </tooltip>
+            </Button>
+            <Button layoutX="18.0" layoutY="105.0" mnemonicParsing="false" onAction="#handleCloseSpeechButton"
+                    prefHeight="25.0" prefWidth="125.0" text="Close">
+                <tooltip>
+                    <Tooltip text="Close this toolbar"/>
+                </tooltip>
+            </Button>
         </ToolBar>
     </right>
     <left>
         <ToolBar fx:id="audioOptionBar" orientation="VERTICAL" prefHeight="120.0" prefWidth="150.0" visible="false">
-        <ListView fx:id="audioList" prefHeight="200.0" prefWidth="150.0"/>
-        <HBox prefHeight="25.0" prefWidth="150.0">
-            <Label mnemonicParsing="false" text="Merge at:" prefHeight="25.0"/>
-            <TextField fx:id="mergePointArea" text="0" prefWidth="35.0" prefHeight="25.0"/>
-            <Label mnemonicParsing="false" text="seconds" prefHeight="25.0"/>
-        </HBox>
-            <Button mnemonicParsing="false" prefHeight="25.0" prefWidth="150.0" text="Add..." onAction="#handleAddAudioButton">
+            <ListView fx:id="audioList" prefHeight="200.0" prefWidth="150.0"/>
+            <HBox prefHeight="25.0" prefWidth="150.0">
+                <Label mnemonicParsing="false" text="Merge at:" prefHeight="25.0"/>
+                <TextField fx:id="mergePointArea" text="0" prefWidth="35.0" prefHeight="25.0"/>
+                <Label mnemonicParsing="false" text="seconds" prefHeight="25.0"/>
+            </HBox>
+            <Button mnemonicParsing="false" prefHeight="25.0" prefWidth="150.0" text="Add..."
+                    onAction="#handleAddAudioButton">
                 <tooltip>
                     <Tooltip text="Add an audio file to the list"/>
                 </tooltip>
             </Button>
-            <Button fx:id="removeAudioButton" mnemonicParsing="false" prefHeight="25.0" prefWidth="150.0" text="Remove" onAction="#handleRemoveAudioButton">
+            <Button fx:id="removeAudioButton" mnemonicParsing="false" prefHeight="25.0" prefWidth="150.0" text="Remove"
+                    onAction="#handleRemoveAudioButton">
                 <tooltip>
                     <Tooltip text="Remove the selected file from the list"/>
                 </tooltip>
             </Button>
-            <Button mnemonicParsing="false" prefHeight="25.0" prefWidth="150.0" text="Create New" onAction="#handleAddSpeechButton">
+            <Button mnemonicParsing="false" prefHeight="25.0" prefWidth="150.0" text="Create New"
+                    onAction="#handleAddSpeechButton">
                 <tooltip>
                     <Tooltip text="View the speech toolbar to create your own audio"/>
                 </tooltip>
             </Button>
-            <Button fx:id="mergeSelectedButton" mnemonicParsing="false" prefHeight="25.0" prefWidth="150.0" text="Merge Selected" onAction="#handleMergeAudioButton" disable="false">
+            <Button fx:id="mergeSelectedButton" mnemonicParsing="false" prefHeight="25.0" prefWidth="150.0"
+                    text="Merge Selected" onAction="#handleMergeAudioButton" disable="false">
                 <tooltip>
                     <Tooltip text="Merge the selected item into the video."/>
                 </tooltip>
             </Button>
-            <Button mnemonicParsing="false" prefHeight="25.0" prefWidth="150.0" text="Close" onAction="#handleCloseAudioButton">
+            <Button mnemonicParsing="false" prefHeight="25.0" prefWidth="150.0" text="Close"
+                    onAction="#handleCloseAudioButton">
                 <tooltip>
                     <Tooltip text="Close this toolbar"/>
                 </tooltip>
             </Button>
         </ToolBar>
     </left>
-   <bottom>
-       <VBox>
-           <children>
-       <Slider fx:id="mainProgressSlider" prefHeight="12.0" prefWidth="500.0">
-           <tooltip>
-               <Tooltip text="Progress in the video"/>
-           </tooltip>
-       </Slider>
+    <bottom>
+        <VBox>
+            <Slider fx:id="mainProgressSlider" prefHeight="12.0" prefWidth="500.0">
+                <tooltip>
+                    <Tooltip text="Progress in the video"/>
+                </tooltip>
+            </Slider>
             <ToolBar fx:id="videoOptionBar" prefHeight="30.0" prefWidth="200.0" BorderPane.alignment="CENTER">
-              <items>
-                <Button fx:id="addSpeechButton" mnemonicParsing="false" onAction="#handleManageAudioButton" prefHeight="25.0" prefWidth="25.0" disable="true">
-                  <graphic>
-                      <ImageView fitHeight="25.0" fitWidth="25.0">
-                          <Image url="@PlusIcon.png"/>
-                      </ImageView>
-                  </graphic>
-                    <tooltip>
-                        <Tooltip text="Add audio to video"/>
-                    </tooltip>
-                </Button>
-                  <Button fx:id="playPauseButton" mnemonicParsing="false" onAction="#handlePlayPauseButton" prefHeight="25.0" prefWidth="25.0" disable="true">
-                  <graphic>
-                  <ImageView fitHeight="25.0" fitWidth="25.0">
-                      <Image url="@PlayIcon.png"/>
-                  </ImageView>
-              </graphic>
-                      <tooltip>
-                          <Tooltip text="Play the video"/>
-                      </tooltip>
-                  </Button>
-                  <ImageView fitHeight="25.0" fitWidth="120.0" pickOnBounds="true" preserveRatio="true" >
-                      <Image url="@SpeakerIcon.png"/>
-                  </ImageView>
-                  <Slider fx:id="mainVolumeSlider" prefHeight="12.0" prefWidth="250.0" >
-                      <tooltip>
-                          <Tooltip text="Adjust the volume"/>
-                      </tooltip>
-                  </Slider>
-              </items>
-               </ToolBar>
-           </children>
-       </VBox>
-   </bottom>
+                <items>
+                    <Button fx:id="addSpeechButton" mnemonicParsing="false" onAction="#handleManageAudioButton"
+                            prefHeight="25.0" prefWidth="25.0" disable="true">
+                        <graphic>
+                            <ImageView fitHeight="25.0" fitWidth="25.0">
+                                <Image url="@PlusIcon.png"/>
+                            </ImageView>
+                        </graphic>
+                        <tooltip>
+                            <Tooltip text="Add audio to video"/>
+                        </tooltip>
+                    </Button>
+                    <Button fx:id="playPauseButton" mnemonicParsing="false" onAction="#handlePlayPauseButton"
+                            prefHeight="25.0" prefWidth="25.0" disable="true">
+                        <graphic>
+                            <ImageView fitHeight="25.0" fitWidth="25.0">
+                                <Image url="@PlayIcon.png"/>
+                            </ImageView>
+                        </graphic>
+                        <tooltip>
+                            <Tooltip text="Play the video"/>
+                        </tooltip>
+                    </Button>
+                    <ImageView fitHeight="25.0" fitWidth="120.0" pickOnBounds="true" preserveRatio="true">
+                        <Image url="@SpeakerIcon.png"/>
+                    </ImageView>
+                    <Slider fx:id="mainVolumeSlider" prefHeight="12.0" prefWidth="250.0">
+                        <tooltip>
+                            <Tooltip text="Adjust the volume"/>
+                        </tooltip>
+                    </Slider>
+                </items>
+            </ToolBar>
+        </VBox>
+    </bottom>
     <top>
         <MenuBar fx:id="mainMenuBar" BorderPane.alignment="CENTER">
-            <menus>
-                <Menu mnemonicParsing="false" text="File">
-                    <items>
-                        <MenuItem mnemonicParsing="false" onAction="#handleNewProjectButton" text="New Project" />
-                        <MenuItem mnemonicParsing="false" onAction="#handleOpenProjectButton" text="Open Project" />
-                        <MenuItem fx:id="openVideoButton" mnemonicParsing="false" onAction="#handleOpenVideoButton" text="Add/Change project video..." disable="true" />
-                        <MenuItem mnemonicParsing="false" text="Close" onAction="#handleCloseMenuButton" />
-                    </items>
-                </Menu>
-            </menus>
+            <Menu mnemonicParsing="false" text="File">
+                <items>
+                    <MenuItem mnemonicParsing="false" onAction="#handleNewProjectButton" text="New Project"/>
+                    <MenuItem mnemonicParsing="false" onAction="#handleOpenProjectButton" text="Open Project"/>
+                    <MenuItem fx:id="openVideoButton" mnemonicParsing="false" onAction="#handleOpenVideoButton"
+                              text="Add/Change project video..." disable="true"/>
+                    <MenuItem mnemonicParsing="false" text="Close" onAction="#handleCloseMenuButton"/>
+                </items>
+            </Menu>
         </MenuBar>
     </top>
+    <MediaView fitHeight="400.0" fitWidth="600.0" BorderPane.alignment="CENTER"/>
+    <MenuBar layoutY="187.0" translateY="-189.0">
+      <menus>
+          <Menu mnemonicParsing="false" text="File">
+              <items>
+                  <MenuItem mnemonicParsing="false" text="Close"/>
+              </items>
+          </Menu>
+      </menus>
+    </MenuBar>
+    <ToolBar layoutY="187.0" prefHeight="40.0" prefWidth="200.0" translateY="180.0" BorderPane.alignment="CENTER_RIGHT">
+      <items>
+          <Button mnemonicParsing="false" text="Manage Audio"/>
+          <Button mnemonicParsing="false" text="Play/Pause"/>
+          <Slider/>
+      </items>
+    </ToolBar>
+    <ToolBar layoutY="100.0" prefHeight="98.0" prefWidth="600.0" translateY="-40.0"
+             BorderPane.alignment="BOTTOM_CENTER">
+      <items>
+          <TextArea prefHeight="88.0" prefWidth="374.0"/>
+          <Button mnemonicParsing="false" text="Save and Add..." translateY="30.0"/>
+          <Button alignment="CENTER_RIGHT" mnemonicParsing="false" text="Add..." translateX="-100.0"/>
+          <Button layoutX="60.0" layoutY="42.0" mnemonicParsing="false" text="Preview" translateX="-150.0"
+                  translateY="-30.0"/>
+      </items>
+    </ToolBar>
 </BorderPane>

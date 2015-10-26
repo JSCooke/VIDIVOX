@@ -70,9 +70,7 @@ public class FestivalSpeech {
 			ProcessBuilder pb = new ProcessBuilder("/bin/sh", "-c", process);
 			pb.start().waitFor();
 
-		} catch (IOException e) {
-			WarningDialogue.genericError(e.getMessage());
-		} catch (InterruptedException e) {
+		} catch (IOException | InterruptedException e) {
 			WarningDialogue.genericError(e.getMessage());
 		}
 
@@ -134,20 +132,12 @@ public class FestivalSpeech {
 					pos++;
 				}
 				
-				//We now have the pid of the process that is actually making the fesival sound. Return it.
+				//We now have the pid of the process that is actually making the festival sound. Return it.
 				if( !pidString.isEmpty() ){
 					return Integer.parseInt(pidString);
 				}
 				
-			} catch (NoSuchFieldException e) {
-				WarningDialogue.genericError(e.getMessage());
-			} catch (SecurityException e) {
-				WarningDialogue.genericError(e.getMessage());
-			} catch (IllegalArgumentException e) {
-				WarningDialogue.genericError(e.getMessage());
-			} catch (IllegalAccessException e) {
-				WarningDialogue.genericError(e.getMessage());
-			} catch (IOException e) {
+			} catch (NoSuchFieldException | SecurityException | IllegalAccessException | IllegalArgumentException | IOException e) {
 				WarningDialogue.genericError(e.getMessage());
 			}
 		}

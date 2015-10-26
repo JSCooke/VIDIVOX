@@ -101,7 +101,7 @@ public class MainWindowController {
     @FXML
     private TextField mergePointArea;
 
-    private List<Animation> playing = new ArrayList<Animation>();
+    private List<Animation> playing = new ArrayList<>();
 
     @FXML
     private Button speechToProjectButton;
@@ -171,7 +171,7 @@ public class MainWindowController {
                 }
 
                 //Copy the new video into the project.
-                File destFile = new File(CurrentDirectory.getDirectory().getAbsolutePath().toString()+System.getProperty("file.separator")+file.getName());
+                File destFile = new File(CurrentDirectory.getDirectory().getAbsolutePath() +System.getProperty("file.separator")+file.getName());
                 Files.copy(file.toPath(), destFile.toPath());
                 currentVideo = file;
 
@@ -294,13 +294,13 @@ public class MainWindowController {
 
         //Adds the new file to the list.
         ObservableList<String> audioFiles = audioList.getItems();
-        audioFiles.add(audioFile.getName().toString());
+        audioFiles.add(audioFile.getName());
         audioList.setItems(audioFiles);
 
         try {
             //Updates the manifest to reflect the new file.
             ManifestController manifest = new ManifestController(CurrentDirectory.getDirectory());
-            manifest.addAudio(audioFile.getName().toString());
+            manifest.addAudio(audioFile.getName());
         }catch(FileNotFoundException e){
             //This shouldn't be reachable, as we create the file it refers to in the above statements.
             Dialogue.genericError("Audio file was not generated correctly.");
@@ -589,7 +589,7 @@ public class MainWindowController {
             File destDirectory = dirChooser.showDialog(new Stage());
 
             //Add the path of the current directory.
-            CurrentDirectory.addPath(destDirectory.getAbsolutePath().toString());
+            CurrentDirectory.addPath(destDirectory.getAbsolutePath());
 
             //Ask for user input.
             InputDialogue inputBox = new InputDialogue("Please enter a name for the project:", "Project");
@@ -638,7 +638,7 @@ public class MainWindowController {
 
                 try {
                     //Copies source file into the project.
-                    String destName = CurrentDirectory.getDirectory().getAbsolutePath().toString() + System.getProperty("file.separator") + sourceFile.getName().toString();
+                    String destName = CurrentDirectory.getDirectory().getAbsolutePath() + System.getProperty("file.separator") + sourceFile.getName();
                     File destFile = new File(destName);
 
                     //If the destination file already exists, ask to replace it.
@@ -653,11 +653,11 @@ public class MainWindowController {
                     }
 
                     //Adds the copied file to the list visible to the user.
-                    audioFiles.add(sourceFile.getName().toString());
+                    audioFiles.add(sourceFile.getName());
                     audioList.setItems(audioFiles);
 
                     //Updates the manifest to reflect the new file.
-                    manifest.addAudio(sourceFile.getName().toString());
+                    manifest.addAudio(sourceFile.getName());
                     removeAudioButton.setDisable(false);
                     mergeSelectedButton.setDisable(false);
 
@@ -803,7 +803,7 @@ public class MainWindowController {
                     openVideoButton.setDisable(false);
                 }
 
-                //Disable buttons relationg to list items if the list is empty.
+                //Disable buttons relating to list items if the list is empty.
                 if (audioList.getItems().isEmpty()){
                     removeAudioButton.setDisable(true);
                     mergeSelectedButton.setDisable(true);

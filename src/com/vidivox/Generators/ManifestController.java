@@ -17,7 +17,7 @@ import java.util.Scanner;
  */
 public class ManifestController {
 
-    File manifest;
+    private File manifest;
 
     public ManifestController(File projectDir){
         this.manifest = new File(projectDir.getAbsolutePath()+System.getProperty("file.separator")+"Manifest.vvx");
@@ -158,7 +158,7 @@ public class ManifestController {
     /**
      * Gets every audio file from the manifest and puts it into a list.
      * @return Returns an ObservableList of strings - the type used by the list view, and it is iterable.
-     * @throws FileNotFoundException - if no mainfest is found the calling method should be halted.
+     * @throws FileNotFoundException - if no manifest is found the calling method should be halted.
      */
     public ObservableList<String> getAudio() throws FileNotFoundException {
         Scanner s = new Scanner(manifest);

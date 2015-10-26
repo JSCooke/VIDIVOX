@@ -12,7 +12,7 @@ import java.nio.file.Files;
  */
 public class VideoController {
     //The current video.
-    File videoFile;
+    private File videoFile;
 
     /**
      * Sets the current video when the object is instantiated.
