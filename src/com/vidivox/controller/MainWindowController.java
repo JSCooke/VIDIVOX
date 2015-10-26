@@ -512,7 +512,7 @@ public class MainWindowController {
             public void changed (ObservableValue < ?extends String > observableValue, String oldValue, String newValue){
                 //If the string is an integer, its allowed. Otherwise, prevent text entry.
                 //.matches code from http://stackoverflow.com/questions/5439529/determine-if-a-string-is-an-integer-in-java
-                if (!newValue.matches("\\d+")){
+                if (!(newValue.matches("\\d+")||(newValue.isEmpty()))){
                     mergePointArea.setText(oldValue);
                     new WarningDialogue("Please only enter a whole number of seconds.");
                 }
@@ -712,6 +712,9 @@ public class MainWindowController {
      */
     @FXML
     private void handleMergeAudioButton() {
+        if (mergePointArea.getText().isEmpty()){
+            mergePointArea.setText("0");
+        }
         Task<Void> task = new Task<Void>() {
             @Override
             protected Void call() throws Exception {

@@ -91,7 +91,7 @@
                     <Tooltip text="View the speech toolbar to create your own audio"/>
                 </tooltip>
             </Button>
-            <Button mnemonicParsing="false" prefHeight="25.0" prefWidth="150.0" text="Merge Selected" onAction="#handleMergeAudioButton">
+            <Button fx:id="MergeSelectedButton" mnemonicParsing="false" prefHeight="25.0" prefWidth="150.0" text="Merge Selected" onAction="#handleMergeAudioButton" disable="false">
                 <tooltip>
                     <Tooltip text="Merge the selected item into the video."/>
                 </tooltip>
