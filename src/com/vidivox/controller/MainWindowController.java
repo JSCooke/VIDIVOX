@@ -191,8 +191,10 @@ public class MainWindowController {
         try {
             if(mainMediaPlayer.getStatus() == MediaPlayer.Status.PLAYING){
                 mainMediaPlayer.pause();
+                playPauseButton.setTooltip(new Tooltip(("Play the video.")));
             } else {
                 mainMediaPlayer.play();
+                playPauseButton.setTooltip(new Tooltip(("Pause the video.")));
             }
         } catch (NullPointerException e){
             new WarningDialogue("You need to open a video file before you can play anything");
