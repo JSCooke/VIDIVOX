@@ -10,6 +10,7 @@ import java.io.File;
  * Holds the currently open project, and details about the previous project for reloading purposes.
  */
 public class CurrentDirectory {
+
     private static CurrentDirectory currentDirectory;
     private static File directory;
     private static String name;
@@ -31,6 +32,7 @@ public class CurrentDirectory {
         if (currentDirectory == null) {
             currentDirectory = new CurrentDirectory();
         }
+
         CurrentDirectory.directory = directory;
         //Updates fields and backups.
         CurrentDirectory.addName(directory.getName());
@@ -46,6 +48,7 @@ public class CurrentDirectory {
         if (currentDirectory == null) {
             currentDirectory = new CurrentDirectory();
         }
+
         CurrentDirectory.nameBackup=CurrentDirectory.name;
         CurrentDirectory.name = name;
     }
@@ -58,6 +61,7 @@ public class CurrentDirectory {
         if (currentDirectory == null) {
             currentDirectory = new CurrentDirectory();
         }
+
         CurrentDirectory.pathBackup=CurrentDirectory.path;
         CurrentDirectory.path = path;
     }
@@ -69,6 +73,7 @@ public class CurrentDirectory {
     public static void makeDir() {
         String pathAndName = path+System.getProperty("file.separator")+name;//Platform independent file separator.
         directory=new File(pathAndName);
+
         if (!directory.exists()){
             directory.mkdir();
             ManifestController newMani = new ManifestController(directory);

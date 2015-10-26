@@ -45,7 +45,6 @@ import java.util.*;
  */
 public class MainWindowController {
 
-    //This field is legacy code in the beta version, to interact with Matthew's code to open the video.
     private File currentVideo;
 
     /*
@@ -54,6 +53,7 @@ public class MainWindowController {
      */
     @FXML
     private MediaView mainMediaViewer = new MediaView();
+
     private MediaPlayer mainMediaPlayer;
 
     @FXML
@@ -117,9 +117,10 @@ public class MainWindowController {
 
     @FXML
     private Image pauseIcon;
+
     /**
      * Handles the code around opening a video.
-     * Actually opening the video is delegated to the helper method, openNewVideo
+     * Actually opening the video is delegated to the helper method, openNewVideo.
      * This simply updates the project and creates the FileChooser window.
      */
     @FXML
@@ -134,6 +135,7 @@ public class MainWindowController {
         fileChooser.getExtensionFilters().add(allFilter);
         //Gets the video file, by showing the FileChooser to the user.
         File file = fileChooser.showOpenDialog(new Stage());
+
         try {
             //Updates the manifest to reflect the new video.
             ManifestController manifest = new ManifestController(CurrentDirectory.getDirectory());
@@ -151,6 +153,7 @@ public class MainWindowController {
     /**
      * Helper method for opening the file.
      * Deals mainly with GUI components.
+     * Clears the current video, and replaces it with the new video.
      * @param file - The video to open.
      */
     private void openNewVideo(File file){
@@ -166,16 +169,20 @@ public class MainWindowController {
                     }
                     mainMediaPlayer.dispose();
                 }
+
                 //Copy the new video into the project.
                 File destFile = new File(CurrentDirectory.getDirectory().getAbsolutePath().toString()+System.getProperty("file.separator")+file.getName());
                 Files.copy(file.toPath(), destFile.toPath());
                 currentVideo = file;
+
                 //JavaFX MediaView requires a MediaPlayer object, which requires a Media object, which requires a File.
                 mainMediaPlayer = new MediaPlayer(new Media(file.toURI().toString()));
                 mainMediaViewer.setMediaPlayer(mainMediaPlayer);
+
                 //Calls methods to set up various GUI effects, such as the slider, and the resizable window.
                 initaliseResizeListener();
                 initalisePlayEnvironment();
+
                 //Enables video related buttons, which are disabled by default.
                 addSpeechButton.setDisable(false);
                 playPauseButton.setDisable(false);
@@ -197,6 +204,7 @@ public class MainWindowController {
 
     /**
      * Plays and pauses the video.
+     * This also updates the tooltip and values of the play/pause button.
      * This is made easy by the MediaPlayer functions.
      */
     @FXML
@@ -212,6 +220,7 @@ public class MainWindowController {
                 playPauseButton.setTooltip(new Tooltip(("Pause the video.")));
             }
         } catch (NullPointerException e){
+            //The button is disabled if this could occur.
             new WarningDialogue("You need to open a video file before you can play anything");
         }
     }
@@ -256,6 +265,7 @@ public class MainWindowController {
         fileChooser.setTitle("Save speech to mp3 file");
         //A default filename is set for the user.
         fileChooser.setInitialFileName("Dialogue.mp3");
+
         try {
             File file = fileChooser.showSaveDialog(new Stage());
             FestivalSpeech textToSpeak = new FestivalSpeech(mainSpeechTextArea.getText());
@@ -270,20 +280,23 @@ public class MainWindowController {
      */
     @FXML
     private void handleAddToVideoButton(){
-        //Check if there is a video currently loaded
+        //Check if there is a video currently loaded. This button is, however, disabled in this case.
         if(currentVideo == null){
             new WarningDialogue("You must open a video from the file menu before you can add speech to it.");
             return;
         }
+
         InputDialogue inputBox = new InputDialogue("Please enter a valid filename for the new audio file: (A file extension will be added automatically.)","Audio");
         //Create new audio file from text in the textbox and export it to mp3, as a file in the project folder.
         File audioFile = new File(CurrentDirectory.getDirectory().getAbsolutePath()+System.getProperty("file.separator")+inputBox.getText()+".mp3");
         FestivalSpeech text = new FestivalSpeech(mainSpeechTextArea.getText());
         text.exportToMP3(audioFile);
+
         //Adds the new file to the list.
         ObservableList<String> audioFiles = audioList.getItems();
         audioFiles.add(audioFile.getName().toString());
         audioList.setItems(audioFiles);
+
         try {
             //Updates the manifest to reflect the new file.
             ManifestController manifest = new ManifestController(CurrentDirectory.getDirectory());
@@ -337,14 +350,17 @@ public class MainWindowController {
         if (speechOptionBar.isVisible()){
             return;
         }
+
         //Stop all current animations.
         for (Animation a:playing){
             a.stop();
         }
+
         //The text listener handles code to do with text input. It isn't initialised until the toolbar is visible.
         initaliseTextToSpeechListener();
         speechOptionBar.setVisible(true);
         FadeTransition speechFT = new FadeTransition(Duration.millis(100), speechOptionBar);
+
         //Can't use the normal method here, its a fade in, not a fade out.
         speechFT.setFromValue(0.0);
         speechFT.setToValue(1.0);
@@ -360,13 +376,16 @@ public class MainWindowController {
         if (audioOptionBar.isVisible()){
             return;
         }
+
         //Stop all current animations.
         for (Animation a:playing){
             a.stop();
         }
+
         audioOptionBar.setVisible(true);
         initialiseMergePointListener();
         FadeTransition audioFT = new FadeTransition(Duration.millis(100), audioOptionBar);
+
         //Can't use the normal method here, its a fade in, not a fade out.
         audioFT.setFromValue(0.0);
         audioFT.setToValue(1.0);
@@ -382,6 +401,7 @@ public class MainWindowController {
         if (!speechOptionBar.isVisible()){
             return;
         }
+
         //Fade out.
         FadeTransition speechFT = new FadeTransition(Duration.millis(100), speechOptionBar);
         playFadingAnimation(speechFT);
@@ -403,13 +423,16 @@ public class MainWindowController {
         if (!audioOptionBar.isVisible()){
             return;
         }
+
         //Makes the speech toolbar disappear too, if its visible.
         if (speechOptionBar.isVisible()){
             handleCloseSpeechButton();
         }
+
         //Fade out.
         FadeTransition speechFT = new FadeTransition(Duration.millis(100), audioOptionBar);
         playFadingAnimation(speechFT);
+
         //Change the visibility after the animation finishes.
         speechFT.setOnFinished(new EventHandler<ActionEvent>() {
             @Override
@@ -430,6 +453,7 @@ public class MainWindowController {
                 mainProgressSlider.setValue(0);
                 mainProgressSlider.setMin(0);
                 mainProgressSlider.setMax(mainMediaPlayer.getTotalDuration().toMillis());
+
                 //Add a timer to check the current position of the video
                 TimerTask updateSliderPosition = new TimerTask() {
                     @Override
@@ -442,8 +466,10 @@ public class MainWindowController {
                         }
                     }
                 };
+
                 final Timer durationTimer = new Timer();
                 durationTimer.schedule(updateSliderPosition, 0, 100);
+
                 //Listen for changes made to the progress slider by the user
                 mainProgressSlider.valueProperty().addListener(new ChangeListener<Number>() {
                     @Override
@@ -455,6 +481,7 @@ public class MainWindowController {
 
                     }
                 });
+
                 //Set up volume slider
                 mainVolumeSlider.setMax(1);
                 mainVolumeSlider.setValue(1);
@@ -476,6 +503,7 @@ public class MainWindowController {
         //Sets MediaViewer to the size of the window on launch.
         mainMediaViewer.setFitWidth(mainWindow.getScene().getWidth());
         mainMediaViewer.setFitHeight(mainWindow.getScene().getHeight());
+
         //Listen for changes in the scene's width, and change the MediaView accordingly.
         mainWindow.getScene().widthProperty().addListener(new ChangeListener<Number>() {
             @Override
@@ -483,6 +511,7 @@ public class MainWindowController {
                 mainMediaViewer.setFitWidth(mainWindow.getScene().getWidth());
             }
         });
+
         //Listen for changes in the scene's height, and change the MediaView accordingly.
         mainWindow.getScene().heightProperty().addListener(new ChangeListener<Number>() {
             @Override
@@ -510,6 +539,7 @@ public class MainWindowController {
                     speechSaveButton.setDisable(false);
                     speechToProjectButton.setDisable(false);
                 }
+
                 //If more than 20 words have been entered, don't allow further text entry, and inform the user.
                 String[] words = newValue.trim().split(" ");
                 if (Array.getLength(words) > 20) {
@@ -522,12 +552,13 @@ public class MainWindowController {
 
     /**
      * This creates the listener for the validation of the starting point text field.
+     * If the string is an integer, its allowed. Otherwise, prevent text entry.
+     * It also allows blank values, because it becomes annoying to enter values otherwise. These are changed to 0 when the video is merged.
      */
     private void initialiseMergePointListener() {
         mergePointArea.textProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed (ObservableValue < ?extends String > observableValue, String oldValue, String newValue){
-                //If the string is an integer, its allowed. Otherwise, prevent text entry.
                 //.matches code from http://stackoverflow.com/questions/5439529/determine-if-a-string-is-an-integer-in-java
                 if (!(newValue.matches("\\d+")||(newValue.isEmpty()))){
                     mergePointArea.setText(oldValue);
@@ -551,23 +582,27 @@ public class MainWindowController {
      */
     @FXML
     private void handleNewProjectButton() {
-        //Perhaps clear the current values in open, then call open at the end of this.
         try {
             //Call the directory chooser, which generates a window based on the user's OS.
             DirectoryChooser dirChooser = new DirectoryChooser();
             dirChooser.setTitle("Select project location...");
             File destDirectory = dirChooser.showDialog(new Stage());
+
             //Add the path of the current directory.
             CurrentDirectory.addPath(destDirectory.getAbsolutePath().toString());
+
             //Ask for user input.
             InputDialogue inputBox = new InputDialogue("Please enter a name for the project:", "Project");
             CurrentDirectory.addName(inputBox.getText());
+
             //Create the directory.
             CurrentDirectory.makeDir();
+
             //Enable video options.
             if (openVideoButton.isDisable()){
                 openVideoButton.setDisable(false);
             }
+
         }catch(NullPointerException e1) {
             //This is thrown if the user cancels the directory choosing operation.
             CurrentDirectory.interrupted();
@@ -577,46 +612,69 @@ public class MainWindowController {
 
     /**
      * Adds audio chosen by the user to the list of audio files in the project.
+     * Uses the Task class - the JavaFX equivalent of SwingWorker.
      */
     @FXML
     private void handleAddAudioButton() {
-        //Could move this to a setup method.
-        //Will throw a NullPointerException if no project is open.
-        ObservableList<String> audioFiles = FXCollections.observableArrayList();
-        for (File f : CurrentDirectory.getDirectory().listFiles()) {
-            if (f.getName().toString().endsWith(".mp3")) {
-                audioFiles.add(f.getName().toString());
+        Task<Void> task = new Task<Void>() {
+            @Override
+            protected Void call() throws Exception {
+                ManifestController manifest = new ManifestController(CurrentDirectory.getDirectory());
+                //Will throw a NullPointerException if no project is open. The menu cannot be accessed in this case, due to disabled buttons.
+                ObservableList<String> audioFiles = FXCollections.observableArrayList();
+                for (File f : CurrentDirectory.getDirectory().listFiles()) {
+                    if (manifest.getAudio().contains((f.getName()))&&f.getName().endsWith(".mp3")) {
+                        audioFiles.add(f.getName());
+                    }
+                }
+
+                //Gets the audio file.
+                final FileChooser fileChooser = new FileChooser();
+                FileChooser.ExtensionFilter mp3Filter = new FileChooser.ExtensionFilter("MP3 files (.mp3)", "*.mp3");
+                fileChooser.getExtensionFilters().add(mp3Filter);
+                FileChooser.ExtensionFilter allFilter = new FileChooser.ExtensionFilter("All files", "*");
+                fileChooser.getExtensionFilters().add(allFilter);
+                File sourceFile = fileChooser.showOpenDialog(new Stage());
+
+                try {
+                    //Copies source file into the project.
+                    String destName = CurrentDirectory.getDirectory().getAbsolutePath().toString() + System.getProperty("file.separator") + sourceFile.getName().toString();
+                    File destFile = new File(destName);
+
+                    //If the destination file already exists, ask to replace it.
+                    if (destFile.exists()){
+                        YesNoDialogue ask = new YesNoDialogue("That file already exists in your project. Would you like to replace it?","Confirm Replace");
+                        if (ask.getOutcome()){
+                            Files.delete(destFile.toPath());
+                            Files.copy(sourceFile.toPath(), destFile.toPath());
+                        }else{
+                            return null;
+                        }
+                    }
+
+                    //Adds the copied file to the list visible to the user.
+                    audioFiles.add(sourceFile.getName().toString());
+                    audioList.setItems(audioFiles);
+
+                    //Updates the manifest to reflect the new file.
+                    manifest.addAudio(sourceFile.getName().toString());
+                    removeAudioButton.setDisable(false);
+                    mergeSelectedButton.setDisable(false);
+
+                } catch (NullPointerException e) {//Both of these arise if the open operation is cancelled, such as by closing the FileChooser.
+                    new WarningDialogue("The operation was aborted.");
+                } catch (IOException e) {
+                    new WarningDialogue("You already added that file"); //This will need changing when I handle files at different times.
+                }
+                return null;
             }
-        }
-        //Gets the audio file.
-        final FileChooser fileChooser = new FileChooser();
-        FileChooser.ExtensionFilter mp3Filter = new FileChooser.ExtensionFilter("MP3 files (.mp3)", "*.mp3");
-        fileChooser.getExtensionFilters().add(mp3Filter);
-        FileChooser.ExtensionFilter allFilter = new FileChooser.ExtensionFilter("All files", "*");
-        fileChooser.getExtensionFilters().add(allFilter);
-        File sourceFile = fileChooser.showOpenDialog(new Stage());
-        try {
-            //Copies source file into the project.
-            String destName = CurrentDirectory.getDirectory().getAbsolutePath().toString()+System.getProperty("file.separator")+sourceFile.getName().toString();
-            File destFile = new File(destName);
-            Files.copy(sourceFile.toPath(), destFile.toPath());
-            //Adds the copied file to the list visible to the user.
-            audioFiles.add(sourceFile.getName().toString());
-            audioList.setItems(audioFiles);
-            //Updates the manifest to reflect the new file.
-            ManifestController manifest = new ManifestController(CurrentDirectory.getDirectory());
-            manifest.addAudio(sourceFile.getName().toString());
-            removeAudioButton.setDisable(false);
-            mergeSelectedButton.setDisable(false);
-        }catch(NullPointerException e){//Both of these arise if the open operation is cancelled, such as by closing the FileChooser.
-            new WarningDialogue("The operation was aborted.");
-        }catch(IOException e){
-            new WarningDialogue("You already added that file"); //This will need changing when I handle files at different times.
-        }
+        };
+        task.run();
     }
 
     /**
      * Removes audio files from the list, manifest and directory.
+     * Uses the Task class - the JavaFX equivalent of SwingWorker.
      */
     @FXML
     private void handleRemoveAudioButton(){
@@ -624,17 +682,20 @@ public class MainWindowController {
         try {
             ObservableList<String> selected = audioList.getSelectionModel().getSelectedItems();
             ManifestController manifest = new ManifestController(CurrentDirectory.getDirectory());
-            //Notify the user if they haven't selected an item, and do nothing else.
+
+            //Notify the user if they haven't selected an item, and do nothing else
             if (selected.isEmpty()) {
                 new WarningDialogue("Please select an item, then press Remove");
                 return;
             }
             List<String> fileNames = manifest.getAudio();
             List<File> files = new LinkedList<>();
+
             //Creates a list of Files from the filenames in the manifest.
-            for (String s:fileNames){
-                files.add(new File(CurrentDirectory.getDirectory().getName()+System.getProperty("file.separator")+s));
+            for (String s : fileNames) {
+                files.add(new File(CurrentDirectory.getDirectory().getName() + System.getProperty("file.separator") + s));
             }
+
             //Delete the selected files from the project folder.
             try {
                 for (File f : files) {
@@ -642,109 +703,130 @@ public class MainWindowController {
                         Files.deleteIfExists(f.toPath());
                     }
                 }
-            }catch(IOException e){
+            } catch (IOException e) {
                 new WarningDialogue("A file you were trying to delete was not found. This shouldn't affect your project.");
             }
+
             //Update the manifest.
             manifest.removeAudio(selected);
+
             //Update the list.
             ObservableList<String> audioFiles = manifest.getAudio();
+
             //If the list from the manifest isn't empty, update the ListView to show it.
             if (!audioFiles.isEmpty()) {
                 audioList.setItems(audioFiles);
-            //If it is empty, then clear the list.
-            }else{
+                //If it is empty, then clear the list.
+            } else {
                 audioList.getItems().clear();
             }
+
+            //Disable buttons relating to list items if the list is empty.
             if (audioList.getItems().isEmpty()) {
                 removeAudioButton.setDisable(true);
                 mergeSelectedButton.setDisable(true);
             }
-        }catch(FileNotFoundException e){
+         } catch (FileNotFoundException e) {
             Dialogue.genericError("A manifest error occurred.");
         }
     }
 
     /**
      * Opens a previously created project.
-     * This could benefit from a SwingWorker thread (or, more precisely, the JavaFX equivalent), in case the loop needs to run many times.
-     * A progress bar may also be an alternative.
+     * Uses the Task class - the JavaFX equivalent of SwingWorker.
      */
     @FXML
     private void handleOpenProjectButton() {
-        //Ask the user to find the project.
-        DirectoryChooser dirChooser = new DirectoryChooser();
-        dirChooser.setTitle("Select project directory...");
-        File loadDirectory = dirChooser.showDialog(new Stage());
-        //Check if any of the files is a manifest.
-        boolean hasManifest = false;
-        try {
-            for (File f : loadDirectory.listFiles()) {
-                if (f.getName().endsWith(".vvx")) {
-                    hasManifest = true;
-                    break;
-                }
-            }
-            //If all files are checked and no manifest is found, return.
-            if (!hasManifest) {
-                new WarningDialogue("Sorry, that is not a valid project.\nOnly folders with manifests (.vvx) are valid.");
-                return;
-            }
-            //Update the CurrentDirectory class.
-            CurrentDirectory.setDirectory(loadDirectory);
-        }catch (NullPointerException e){
-            //Thrown when the user doesn't select a file.
-            new WarningDialogue("Operation aborted, no file was chosen.");
-            return;
-        }
-        ManifestController manifest = new ManifestController(CurrentDirectory.getDirectory());
-        try {
-            File video = new File(CurrentDirectory.getDirectory() + System.getProperty("file.separator") + manifest.getVideo());
-            openNewVideo(video);
-        }catch(FileNotFoundException e){
-            new WarningDialogue("No video was found for this project. Add one to get started!");
-            //If there is no video, the program won't allow any audio. To avoid further errors, we terminate the method here.
-            return;
-        }
-        try {
-            List<String> audio = manifest.getAudio();
-            //Populates the list with the files
-            ObservableList<String> audioFiles = FXCollections.observableArrayList();
-            for (File f : CurrentDirectory.getDirectory().listFiles()) {
-                if (audio.contains(f.getName())) {
-                    audioFiles.add(f.getName());
-                }
-            }
-            audioList.setItems(audioFiles);
+        Task<Void> task = new Task<Void>() {
+            @Override
+            protected Void call() throws Exception {
+                //Ask the user to find the project.
+                DirectoryChooser dirChooser = new DirectoryChooser();
+                dirChooser.setTitle("Select project directory...");
+                File loadDirectory = dirChooser.showDialog(new Stage());
 
-        }catch(FileNotFoundException e){
-            //This means the manifest doesn't exist, and isn't reachable. (It would have caused an exception earlier)
-            Dialogue.genericError("Manifest not found.");
-            return;
-        }
-        //Enable video options.
-        if (openVideoButton.isDisable()){
-            openVideoButton.setDisable(false);
-        }
-        if (audioList.getItems().isEmpty()){
-            removeAudioButton.setDisable(true);
-            mergeSelectedButton.setDisable(true);
-        } else {
-            removeAudioButton.setDisable(false);
-            mergeSelectedButton.setDisable(false);
-        }
+                //Check if any of the files is a manifest.
+                boolean hasManifest = false;
+                try {
+                    for (File f : loadDirectory.listFiles()) {
+                        if (f.getName().endsWith(".vvx")) {
+                            hasManifest = true;
+                            break;
+                        }
+                    }
+
+                    //If all files are checked and no manifest is found, return.
+                    if (!hasManifest) {
+                        new WarningDialogue("Sorry, that is not a valid project.\nOnly folders with manifests (.vvx) are valid.");
+                        return null;
+                    }
+
+                    //Update the CurrentDirectory class.
+                    CurrentDirectory.setDirectory(loadDirectory);
+
+                }catch (NullPointerException e){
+                    //Thrown when the user doesn't select a file.
+                    new WarningDialogue("Operation aborted, no file was chosen.");
+                    return null;
+                }
+
+                ManifestController manifest = new ManifestController(CurrentDirectory.getDirectory());
+
+                try {
+                    File video = new File(CurrentDirectory.getDirectory() + System.getProperty("file.separator") + manifest.getVideo());
+                    openNewVideo(video);
+                }catch(FileNotFoundException e){
+                    new WarningDialogue("No video was found for this project. Add one to get started!");
+                    //If there is no video, the program won't allow any audio. To avoid further errors, we terminate the method here.
+                    return null;
+                }
+
+                try {
+                    List<String> audio = manifest.getAudio();
+                    //Populates the list with the files
+                    ObservableList<String> audioFiles = FXCollections.observableArrayList();
+                    for (File f : CurrentDirectory.getDirectory().listFiles()) {
+                        if (audio.contains(f.getName())) {
+                            audioFiles.add(f.getName());
+                        }
+                    }
+                    audioList.setItems(audioFiles);
+
+                }catch(FileNotFoundException e){
+                    //This means the manifest doesn't exist, and isn't reachable. (It would have caused an exception earlier)
+                    Dialogue.genericError("Manifest not found.");
+                    return null;
+                }
+
+                //Enable video options.
+                if (openVideoButton.isDisable()){
+                    openVideoButton.setDisable(false);
+                }
+
+                //Disable buttons relationg to list items if the list is empty.
+                if (audioList.getItems().isEmpty()){
+                    removeAudioButton.setDisable(true);
+                    mergeSelectedButton.setDisable(true);
+                } else {
+                    removeAudioButton.setDisable(false);
+                    mergeSelectedButton.setDisable(false);
+                }
+                return null;
+            }
+        };
+        task.run();
     }
 
     /**
      * This method merges the audio in the selected audio files with the videos.
-     * Due to difficulties in ffmpeg calls, this is currently functioning to assignment 3 standards.
-     * This is a known, and serious, issue, and is being remedied.
+     * Uses the Task class - the JavaFX equivalent of SwingWorker.
      */
     @FXML
     private void handleMergeAudioButton() {
         if (mergePointArea.getText().isEmpty()){
             mergePointArea.setText("0");
         }
+
         Task<Void> task = new Task<Void>() {
             @Override
             protected Void call() throws Exception {
@@ -761,7 +843,9 @@ public class MainWindowController {
                     //A default filename is set for the user.
                     fileChooser.setInitialFileName("NewVideo.mp4");
                     File newVideoFile = fileChooser.showSaveDialog(new Stage());
-                    new WarningDialogue("Beginning merge process...\nThis may take some time, and your video may change in length.");
+
+                    //Notify the user that merging begins. This was asked for in the testing of assignment 4.
+                    new WarningDialogue("Beginning merge process...");
                     ManifestController manifest = new ManifestController(CurrentDirectory.getDirectory());
                     ObservableList<String> selected = audioList.getSelectionModel().getSelectedItems();
                     File videoFile = new File(CurrentDirectory.getDirectory().getName() + System.getProperty("file.separator") + manifest.getVideo());
@@ -769,6 +853,7 @@ public class MainWindowController {
                     File tempAudio;
                     File paddedAudio;
                     File mergedVideo;
+
                     //For all selected audio, adds the audio to the video file.
                     for (String s : selected) {
                         tempAudio = new File(CurrentDirectory.getDirectory().getName() + System.getProperty("file.separator") + s);
@@ -776,6 +861,8 @@ public class MainWindowController {
                         mergedVideo = videoController.mergeAudio(paddedAudio, videoFile);
                         mergedVideo.renameTo(newVideoFile);
                     }
+
+                    //Allow the user to change the current video to the one they just made, to add more audio.
                     YesNoDialogue affirm = new YesNoDialogue("Merging successful. Your file is now at the location you specified.\nWould you like to change the project video to the new video you just made and add more audio?","New Video Complete!");
                     if (affirm.getOutcome()){
                         openNewVideo(newVideoFile);

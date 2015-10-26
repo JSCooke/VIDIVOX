@@ -13,7 +13,6 @@ import java.lang.reflect.Field;
 public class FestivalSpeech {
 	
 	private String text;
-	private int pid;
 	private Process p;
 	
 	/**
@@ -36,6 +35,7 @@ public class FestivalSpeech {
 	 * Stop the speaking voice at any point
 	 */
 	public void stopSpeak(){
+		int pid;
 		pid = getFestivalPID(p);
 		ProcessBuilder pb = new ProcessBuilder("/bin/sh", "-c", "kill " + pid);
 		try {

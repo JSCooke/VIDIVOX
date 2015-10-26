@@ -5,36 +5,37 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 /**
- * Created by Jayden on 26/10/2015.
+ * @author Jayden Cooke
+ * JavaFX has no dialog box class, so this allows me to generate dialog boxes.
+ * This implements the template design pattern, with the setUpLayout method as the hook.
+ * Concept based on the WarningDialogue class created by Matthew Canham for assignment 3.
  */
 public abstract class Dialogue {
 
-    protected final Stage warningStage;
-    /**
-     * Handles normal errors.
-     * @param warningText - The text to present to the user.
-     */
-    public Dialogue(String warningText) {
-        this(warningText, "Warning!");
-    }
+    protected final Stage stage;
 
     /**
-     * Dialog box with a customisable layout. Subclasses implement the setUpLayout method to change the look.
-     * @param warningText - The words to present to the user
+     * Dialog box with a customisable layout. Subclasses implement the setUpLayout method to change the look and function.
+     * @param messageText - The words to present to the user
      * @param titleText - The title of the dialog box
      */
-    public Dialogue(String warningText, String titleText) {
+    public Dialogue(String messageText, String titleText) {
         //Initialise the window
-        warningStage = new Stage();
-        warningStage.initModality(Modality.APPLICATION_MODAL);
-        warningStage.setTitle(titleText);
-        warningStage.setMinWidth(250);
-        Scene scene = setUpLayout(warningText);
-        warningStage.setScene(scene);
-        warningStage.showAndWait();
+        stage = new Stage();
+        stage.initModality(Modality.APPLICATION_MODAL);
+        stage.setTitle(titleText);
+        stage.setMinWidth(250);
+
+        //Call the hook for the layout
+        Scene scene = setUpLayout(messageText);
+
+        //Show the window
+        stage.setScene(scene);
+        stage.showAndWait();
     }
 
-    protected abstract Scene setUpLayout(String warningText);
+    //Details of the layout are decided by the subclasses.
+    protected abstract Scene setUpLayout(String messageText);
 
     /**
      * Can be called from anywhere an error has occurred.
