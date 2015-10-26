@@ -104,6 +104,12 @@ public class MainWindowController {
     @FXML
     private Button speechToProjectButton;
 
+    @FXML
+    private Button removeAudioButton;
+
+    @FXML
+    private Button mergeSelectedButton;
+
     /**
      * Handles the code around opening a video.
      * Actually opening the video is delegated to the helper method, openNewVideo
@@ -591,6 +597,8 @@ public class MainWindowController {
             //Updates the manifest to reflect the new file.
             ManifestController manifest = new ManifestController(CurrentDirectory.getDirectory());
             manifest.addAudio(sourceFile.getName().toString());
+            removeAudioButton.setDisable(false);
+            mergeSelectedButton.setDisable(false);
         }catch(NullPointerException e){//Both of these arise if the open operation is cancelled, such as by closing the FileChooser.
             new WarningDialogue("The operation was aborted.");
         }catch(IOException e){
@@ -638,6 +646,10 @@ public class MainWindowController {
             //If it is empty, then clear the list.
             }else{
                 audioList.getItems().clear();
+            }
+            if (audioList.getItems().isEmpty()) {
+                removeAudioButton.setDisable(true);
+                mergeSelectedButton.setDisable(true);
             }
         }catch(FileNotFoundException e){
             Dialogue.genericError("A manifest error occurred.");
@@ -704,6 +716,13 @@ public class MainWindowController {
         //Enable video options.
         if (openVideoButton.isDisable()){
             openVideoButton.setDisable(false);
+        }
+        if (audioList.getItems().isEmpty()){
+            removeAudioButton.setDisable(true);
+            mergeSelectedButton.setDisable(true);
+        } else {
+            removeAudioButton.setDisable(false);
+            mergeSelectedButton.setDisable(false);
         }
     }
 
