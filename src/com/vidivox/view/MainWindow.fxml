@@ -148,31 +148,4 @@
             </Menu>
         </MenuBar>
     </top>
-    <MediaView fitHeight="400.0" fitWidth="600.0" BorderPane.alignment="CENTER"/>
-    <MenuBar layoutY="187.0" translateY="-189.0">
-      <menus>
-          <Menu mnemonicParsing="false" text="File">
-              <items>
-                  <MenuItem mnemonicParsing="false" text="Close"/>
-              </items>
-          </Menu>
-      </menus>
-    </MenuBar>
-    <ToolBar layoutY="187.0" prefHeight="40.0" prefWidth="200.0" translateY="180.0" BorderPane.alignment="CENTER_RIGHT">
-      <items>
-          <Button mnemonicParsing="false" text="Manage Audio"/>
-          <Button mnemonicParsing="false" text="Play/Pause"/>
-          <Slider/>
-      </items>
-    </ToolBar>
-    <ToolBar layoutY="100.0" prefHeight="98.0" prefWidth="600.0" translateY="-40.0"
-             BorderPane.alignment="BOTTOM_CENTER">
-      <items>
-          <TextArea prefHeight="88.0" prefWidth="374.0"/>
-          <Button mnemonicParsing="false" text="Save and Add..." translateY="30.0"/>
-          <Button alignment="CENTER_RIGHT" mnemonicParsing="false" text="Add..." translateX="-100.0"/>
-          <Button layoutX="60.0" layoutY="42.0" mnemonicParsing="false" text="Preview" translateX="-150.0"
-                  translateY="-30.0"/>
-      </items>
-    </ToolBar>
 </BorderPane>
