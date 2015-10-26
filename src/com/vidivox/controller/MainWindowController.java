@@ -3,7 +3,9 @@ package com.vidivox.controller;
 import com.vidivox.Generators.FestivalSpeech;
 import com.vidivox.Generators.ManifestController;
 import com.vidivox.Generators.VideoController;
+import com.vidivox.view.Dialogue;
 import com.vidivox.view.WarningDialogue;
+import com.vidivox.view.YesNoDialogue;
 import javafx.animation.Animation;
 import javafx.animation.FadeTransition;
 import javafx.collections.FXCollections;
@@ -168,10 +170,10 @@ public class MainWindowController {
                 }
             } catch(IOException e){
                 //This shouldn't happen, because of the if statement at the beginning of this method.
-                WarningDialogue.genericError("An error has occurred while copying files.");
+                Dialogue.genericError("An error has occurred while copying files.");
             } catch (java.net.URISyntaxException e){
                 //This is for debugging. The only code that can throw this is computer controlled.
-                WarningDialogue.genericError("An error has occurred while deleting the old file.");
+                Dialogue.genericError("An error has occurred while deleting the old file.");
             }
         }
     }
@@ -263,7 +265,7 @@ public class MainWindowController {
             manifest.addAudio(audioFile.getName().toString());
         }catch(FileNotFoundException e){
             //This shouldn't be reachable, as we create the file it refers to in the above statements.
-            WarningDialogue.genericError("Audio file was not generated correctly.");
+            Dialogue.genericError("Audio file was not generated correctly.");
         }
     }
 
@@ -626,7 +628,7 @@ public class MainWindowController {
                 audioList.getItems().clear();
             }
         }catch(FileNotFoundException e){
-            WarningDialogue.genericError("A manifest error occurred.");
+            Dialogue.genericError("A manifest error occurred.");
         }
     }
 
@@ -684,7 +686,7 @@ public class MainWindowController {
 
         }catch(FileNotFoundException e){
             //This means the manifest doesn't exist, and isn't reachable. (It would have caused an exception earlier)
-            WarningDialogue.genericError("Manifest not found.");
+            Dialogue.genericError("Manifest not found.");
             return;
         }
         //Enable video options.
@@ -724,16 +726,21 @@ public class MainWindowController {
                     File tempAudio;
                     File paddedAudio;
                     File mergedVideo;
+                    //For all selected audio, adds the audio to the video file.
                     for (String s : selected) {
                         tempAudio = new File(CurrentDirectory.getDirectory().getName() + System.getProperty("file.separator") + s);
                         paddedAudio = videoController.padAudio(Integer.parseInt(mergePointArea.getText()), tempAudio, (int)mainMediaPlayer.getTotalDuration().toSeconds());
                         mergedVideo = videoController.mergeAudio(paddedAudio, videoFile);
                         mergedVideo.renameTo(newVideoFile);
                     }
-                    new WarningDialogue("Merging successful. Your file is now at the location you specified.");
+                    YesNoDialogue affirm = new YesNoDialogue("Merging successful. Your file is now at the location you specified.\nWould you like to change the project video to the new video you just made and add more audio?","New Video Complete!");
+                    if (affirm.getOutcome()){
+                        openNewVideo(newVideoFile);
+                        manifest.setVideo(newVideoFile.getName());
+                    }
                 }catch (FileNotFoundException e) {
                     //The way the GUI is designed, this is unreachable.
-                    WarningDialogue.genericError("No video file was found.");
+                    Dialogue.genericError("No video file was found.");
                 }
                 return null;
             }

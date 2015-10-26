@@ -15,7 +15,6 @@ import java.util.Scanner;
  * Video File
  * Audio files, each on a new line
  */
-//The project folder probably needs this too.
 public class ManifestController {
     File manifest;
     public ManifestController(File projectDir){
